@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COMポート受信モニター</title>
+  <title>COMポートリアルタイム受信テスト</title>
   <style>
     body {
       font-family: sans-serif;
@@ -18,14 +18,10 @@
       align-items: center;
       margin-bottom: 15px;
     }
-    button {
-      padding: 8px 16px;
+    button, select {
+      padding: 8px 12px;
       font-size: 14px;
       cursor: pointer;
-    }
-    select {
-      padding: 8px;
-      font-size: 14px;
     }
     #status {
       font-weight: bold;
@@ -36,7 +32,7 @@
     
     #log {
       width: 100%;
-      height: 400px;
+      height: 450px;
       background-color: #1e1e1e;
       color: #00ff00;
       font-family: monospace;
@@ -51,7 +47,7 @@
 </head>
 <body>
 
-  <h2>COMポートデータ受信モニター</h2>
+  <h2>COMポートリアルタイム受信テスト</h2>
 
   <div class="controls">
     <label for="baudrate">ボーレート:</label>
@@ -81,26 +77,20 @@
     const statusText = document.getElementById('status');
     const logContainer = document.getElementById('log');
 
-    // ログ画面にテキストを追加する関数
+    // ログ書き込み処理
     function appendLog(text) {
-      const time = new Date().toLocaleTimeString();
-      logContainer.textContent += `[${time}] ${text}\n`;
-      // 最下部へ自動スクロール
+      logContainer.textContent += text;
       logContainer.scrollTop = logContainer.scrollHeight;
     }
 
-    // 接続・切断ボタンのリスナー
     connectBtn.addEventListener('click', async () => {
       if (port) {
-        // すでに接続されている場合は切断処理を行う
         await disconnect();
       } else {
-        // 未接続の場合は接続処理を行う
         await connect();
       }
     });
 
-    // ログクリアボタン
     clearBtn.addEventListener('click', () => {
       logContainer.textContent = '';
     });
@@ -113,67 +103,72 @@
       }
 
       try {
-        // 1. ユーザーにCOMポートを選択させる
         port = await navigator.serial.requestPort();
-        
-        // 選択されたボーレートを取得
         const baudRate = parseInt(baudrateSelect.value, 10);
         
-        // 2. ポートを開く
         await port.open({ baudRate });
 
-        // UI表示の更新
         statusText.textContent = '接続中';
         statusText.className = 'connected';
         connectBtn.textContent = '切断';
         baudrateSelect.disabled = true;
 
         keepReading = true;
-        appendLog('--- ポートを開きました ---');
+        appendLog('--- ポートを開きました（即時表示モード） ---\n');
 
-        // 3. 受信データの読み込みを開始
         readLoop();
 
       } catch (error) {
         console.error('接続エラー:', error);
-        appendLog(`エラー: ${error.message}`);
-        await disconnect();
+        appendLog(`\n[エラー]: ${error.message}\n`);
+        resetState();
       }
     }
 
-    // データ受信ループ
+    // 即時出力対応の受信ループ
     async function readLoop() {
-      const textDecoder = new TextDecoderStream();
-      const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-      reader = textDecoder.readable.getReader();
-
-      let buffer = '';
+      // ストリーム変換を使わず、バイナリ(Uint8Array)で直接受信
+      reader = port.readable.getReader();
+      const decoder = new TextDecoder();
 
       try {
         while (keepReading) {
           const { value, done } = await reader.read();
-          if (done) {
-            break;
-          }
-          if (value) {
-            buffer += value;
-            // 改行コード（\n）が含まれていれば分割して出力
-            const lines = buffer.split('\n');
-            // 最後の要素はまだ改行が来ていない途中のデータなのでバッファに残す
-            buffer = lines.pop(); 
+          if (done) break;
 
-            for (const line of lines) {
-              // 末尾の \r（キャリッジリターン）を削除して表示
-              appendLog(line.replace(/\r$/, ''));
-            }
+          if (value && value.length > 0) {
+            // 1. テキストに変換（改行を待たずに即時出力）
+            const text = decoder.decode(value, { stream: true });
+            
+            // 2. 16進数（HEX）文字列を作成（デバッグ用）
+            const hex = Array.from(value)
+              .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+              .join(' ');
+
+            const time = new Date().toLocaleTimeString();
+
+            // 受信したブロックごとに時刻・テキスト・HEXを表示
+            appendLog(`[${time}] TEXT: "${text}" | HEX: [${hex}]\n`);
           }
         }
       } catch (error) {
-        console.error('受信エラー:', error);
-        appendLog(`受信エラー: ${error.message}`);
+        if (keepReading) {
+          console.error('受信エラー:', error);
+          appendLog(`\n[受信エラー]: ${error.message}\n`);
+        }
       } finally {
         reader.releaseLock();
       }
+    }
+
+    function resetState() {
+      keepReading = false;
+      port = null;
+      reader = null;
+      statusText.textContent = '未接続';
+      statusText.className = 'disconnected';
+      connectBtn.textContent = '接続';
+      baudrateSelect.disabled = false;
     }
 
     // 切断処理
@@ -181,20 +176,25 @@
       keepReading = false;
 
       if (reader) {
-        await reader.cancel();
+        try {
+          await reader.cancel();
+        } catch (e) {
+          console.warn('Reader cancel error:', e);
+        }
       }
 
       if (port) {
-        await port.close();
-        port = null;
+        try {
+          if (port.readable || port.writable) {
+            await port.close();
+          }
+        } catch (e) {
+          console.warn('Port close error:', e);
+        }
       }
 
-      // UI表示の初期化
-      statusText.textContent = '未接続';
-      statusText.className = 'disconnected';
-      connectBtn.textContent = '接続';
-      baudrateSelect.disabled = false;
-      appendLog('--- 切断しました ---');
+      resetState();
+      appendLog('--- 切断しました ---\n');
     }
   </script>
 </body>
