@@ -79,7 +79,9 @@
     // ログ書き込み処理
     function appendLog(text) {
         console.log(text)
-      logContainer.textContent += text;
+        const textCRLF = text.replace(/\r\n|\r|\n/g, '\r\n');
+
+      logContainer.textContent += textCRLF;
       logContainer.scrollTop = logContainer.scrollHeight;
     }
 
@@ -139,11 +141,10 @@
           if (value && value.length > 0) {
             // 1. テキストに変換（改行を待たずに即時出力）
             const text = decoder.decode(value, { stream: true });
-
-
             const time = new Date().toLocaleTimeString();
 
-            // 受信したブロックごとに時刻・テキスト・HEXを表示
+            
+
             appendLog(text)
 
             
