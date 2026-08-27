@@ -47,7 +47,7 @@
 </head>
 <body>
 
-  <h2>COMポートリアルタイム受信テストV0.2</h2>
+  <h2>COMポートリアルタイム受信テストV0.3</h2>
 
   <div class="controls">
     <label for="baudrate">ボーレート:</label>
@@ -78,6 +78,7 @@
 
     // ログ書き込み処理
     function appendLog(text) {
+        console.log(text)
       logContainer.textContent += text;
       logContainer.scrollTop = logContainer.scrollHeight;
     }
