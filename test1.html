@@ -48,7 +48,7 @@
 </head>
 <body>
 
-  <h2>COMポートリアルタイム受信テストV0.4</h2>
+  <h2>COMポートリアルタイム受信テストV0.5</h2>
 
   <div class="controls">
     <label for="baudrate">ボーレート:</label>
@@ -78,14 +78,34 @@
     const logContainer   = document.getElementById('log'        )
 
     // ログ書き込み処理
+    // 書き込みをする前に一時的にQueueに追加
+    var logQueue = ""
+
     function appendLog(text) {
         console.log(text)
         const textCRLF = text.replace(/\r\n|\r|\n/g, '\r\n')
+        logQueue += textCRLF
+
+        // 改行文字で分割
+        let splitLog = logQueue.split("\r\n")
+        
+        for(let i = 0;i < splitLog.length - 1;i++) {
+            console.log(splitLog[i])
+            logContainer.textContent += splitLog[i]
+            logContainer.scrollTop    = logContainer.scrollHeight
+        }
+
+        logQueue += splitLog[splitLog.length - 1]
+    
+
+
+
+
         // const splitText = textCRLF.split("\r\n")
 
 
-      logContainer.textContent += textCRLF;
-      logContainer.scrollTop = logContainer.scrollHeight;
+    //   logContainer.textContent += textCRLF;
+    //   logContainer.scrollTop = logContainer.scrollHeight;
     }
 
     connectBtn.addEventListener('click', async () => {
