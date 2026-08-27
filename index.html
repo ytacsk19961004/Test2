@@ -67,7 +67,7 @@
         fps: 10,
         qrbox: { width: 250, height: 150 },
         formatsToSupport: [
-          Html5QrcodeSupportedFormats.EAN_13,
+          // Html5QrcodeSupportedFormats.EAN_13,
           Html5QrcodeSupportedFormats.EAN_8
         ]
       };
@@ -86,14 +86,14 @@
     // スキャン成功時の処理
     function onScanSuccess(decodedText, decodedResult) {
       // inputに取得したJANコードを格納
-      document.getElementById("jan_code").value = decodedText;
+      document.getElementById("jan_code").value = decodedText
 
       // 読み取り完了後にカメラを停止
-      html5QrCode.stop().then(() => {
-        document.getElementById('restart-btn').style.display = 'inline-block';
-      }).catch(err => {
-        console.error("停止エラー:", err);
-      });
+      // html5QrCode.stop().then(() => {
+      //   document.getElementById('restart-btn').style.display = 'inline-block';
+      // }).catch(err => {
+      //   console.error("停止エラー:", err);
+      // });
     }
 
     // ページ読み込み時にスキャナーを開始
