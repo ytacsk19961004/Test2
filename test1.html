@@ -111,14 +111,21 @@
                         "1000053477537" : "斎藤　典子"  ,
                         "1000053477193" : "村田　真由美",
                     }
-                    const member = members[data.code] ?? "名称不明"
-                    logContainer.textContent += `${data.date}:担当者変更[${member}]\r\n`
+                    const member = members[data.code] ?? ""
+                    logContainer.textContent += `${data.date}:担当者変更[${member}](${data.code})\r\n`
                     break
-                case "02": // 帳票
+                case "20": // 帳票
 
                     break
-                case "03": // 品目
-                    
+                case "30": // 品目
+                    const items = {
+                        "3000010084707" : "おいしさプラス調味酢"   ,
+                        "3000010085100" : "Ｇ味の素ＫＫコンソメＪ　５００ｇ袋　Ａ",
+                        "3000010085209" : "シェフリッチ５２Ｈ"  ,
+                        "3000010085308" : "タピオカ澱粉ES-5",
+                    }
+                    const item = items[data.code] ?? ""
+                    logContainer.textContent += `${data.date}:原料スキャン[${item}](${data.code})\r\n`
                     break
             }
 
