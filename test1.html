@@ -67,15 +67,14 @@
   <div id="log"></div>
 
   <script>
-    let port = null;
-    let reader = null;
-    let keepReading = false;
-
-    const connectBtn = document.getElementById('connect-btn');
-    const clearBtn = document.getElementById('clear-btn');
-    const baudrateSelect = document.getElementById('baudrate');
-    const statusText = document.getElementById('status');
-    const logContainer = document.getElementById('log');
+    let port             = null
+    let reader           = null
+    let keepReading      = false
+    const connectBtn     = document.getElementById('connect-btn')
+    const clearBtn       = document.getElementById('clear-btn'  )
+    const baudrateSelect = document.getElementById('baudrate'   )
+    const statusText     = document.getElementById('status'     )
+    const logContainer   = document.getElementById('log'        )
 
     // ログ書き込み処理
     function appendLog(text) {
@@ -139,16 +138,23 @@
           if (value && value.length > 0) {
             // 1. テキストに変換（改行を待たずに即時出力）
             const text = decoder.decode(value, { stream: true });
-            
-            // 2. 16進数（HEX）文字列を作成（デバッグ用）
-            const hex = Array.from(value)
-              .map(b => b.toString(16).padStart(2, '0').toUpperCase())
-              .join(' ');
+
 
             const time = new Date().toLocaleTimeString();
 
             // 受信したブロックごとに時刻・テキスト・HEXを表示
-            appendLog(`[${time}] TEXT: "${text}" | HEX: [${hex}]\n`);
+            appendLog(text)
+
+            
+            // // 2. 16進数（HEX）文字列を作成（デバッグ用）
+            // const hex = Array.from(value)
+            //   .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+            //   .join(' ');
+
+            // const time = new Date().toLocaleTimeString();
+
+            // // 受信したブロックごとに時刻・テキスト・HEXを表示
+            // appendLog(`[${time}] TEXT: "${text}" | HEX: [${hex}]\n`);
           }
         }
       } catch (error) {
