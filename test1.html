@@ -102,8 +102,30 @@
             }
 
             console.log(splitLog[i])
-            logContainer.textContent += `${data.date}:${data.code}.${data.result}\r\n`
-            logContainer.scrollTop    = logContainer.scrollHeight
+
+            switch(data.code.substring(0, 2)) {
+                case "01": // 担当者
+                    const members = {
+                        "010005347708" : "鈴木 悠太"   ,
+                        "010005345452" : "亀井　佐和子",
+                        "010005347753" : "斎藤　典子"  ,
+                        "010005347719" : "村田　真由美",
+                    }
+                    const member = members[data.code] ?? "名称不明"
+                    logContainer.textContent += `${data.date}:担当者変更[${member}]\r\n`
+                    break
+                case "02": // 帳票
+
+                    break
+                case "03": // 品目
+                    
+                    break
+            }
+
+
+            // // 日付:コード.結果
+            // logContainer.textContent += `${data.date}:${data.code}.${data.result}\r\n`
+            // logContainer.scrollTop    = logContainer.scrollHeight
         }
 
         logQueue += splitLog[splitLog.length - 1]
