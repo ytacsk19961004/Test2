@@ -90,8 +90,19 @@
         let splitLog = logQueue.split("\r\n")
         
         for(let i = 0;i < splitLog.length - 1;i++) {
+            let text = splitLog[i]
+            let splitText = text.split(" ")
+            // 0 コード
+            // 1 2日次
+            // 3 OK NG
+            let data = {
+                code   : splitText[0],
+                date   : splitText[1] + " " + splitText[2],
+                result : splitText[2]
+            }
+
             console.log(splitLog[i])
-            logContainer.textContent += splitLog[i]
+            logContainer.textContent += `${data.date}:${data.code}.${data.result}\r\n`
             logContainer.scrollTop    = logContainer.scrollHeight
         }
 
