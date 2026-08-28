@@ -103,30 +103,54 @@
 
             console.log(splitLog[i])
 
-            switch(data.code.substring(0, 2)) {
-                case "10": // 担当者
-                    const members = {
-                        "1000053477087" : "鈴木 悠太"   ,
-                        "1000053454521" : "亀井　佐和子",
-                        "1000053477537" : "村田　真由美"  ,
-                        "1000053477193" : "斎藤　典子",
-                    }
-                    const member = members[data.code] ?? ""
-                    logContainer.textContent += `${data.date}:担当者変更[${member}](${data.code})\r\n`
-                    break
-                case "20": // 帳票
+            // 記録者情報
+            const members = {
+              "053477087" : "鈴木 悠太",
+              "053454521" : "亀井　佐和子",
+              "053477537" : "村田　真由美",
+              "053477193" : "斎藤　典子",
+            }
 
-                    break
-                case "30": // 品目
-                    const items = {
-                        "3000010084707" : "おいしさプラス調味酢"   ,
-                        "3000010085100" : "Ｇ味の素ＫＫコンソメＪ　５００ｇ袋　Ａ",
-                        "3000010085209" : "シェフリッチ５２Ｈ"  ,
-                        "3000010085308" : "タピオカ澱粉ES-5",
-                    }
-                    const item = items[data.code] ?? ""
-                    logContainer.textContent += `${data.date}:原料スキャン[${item}](${data.code})\r\n`
-                    break
+            switch(data.code.substring(0, 4)) {
+                case "2100": // 記録開始：[${name}]
+                  {
+                    let memberId   = data.code.substring(4, 12)
+                    let memberName = members[memberId] ?? memberId
+                    logContainer.textContent += `${data.date}|記録開始[${memberName}]\r\n`
+                  }
+
+                  break
+                case "2200": // 記録終了：[${name}]
+                  {
+                    let memberId = data.code.substring(4, 12)
+                    let memberName = members[memberId] ?? memberId
+                    logContainer.textContent += `${data.date}|記録開始[${memberName}]\r\n`
+                  }
+                  break
+
+                // case "10": // 担当者
+                //     const members = {
+                //         "1000053477087" : "鈴木 悠太   "   ,
+                //         "1000053454521" : "亀井　佐和子",
+                //         "1000053477537" : "村田　真由美"  ,
+                //         "1000053477193" : "斎藤　典子  ",
+                //     }
+                //     const member = members[data.code] ?? ""
+                //     logContainer.textContent += `${data.date}:担当者変更[${member}](${data.code})\r\n`
+                //     break
+                // case "20": // 帳票
+
+                //     break
+                // case "30": // 品目
+                //     const items = {
+                //         "3000010084707" : "おいしさプラス調味酢"   ,
+                //         "3000010085100" : "Ｇ味の素ＫＫコンソメＪ　５００ｇ袋　Ａ",
+                //         "3000010085209" : "シェフリッチ５２Ｈ"  ,
+                //         "3000010085308" : "タピオカ澱粉ES-5",
+                //     }
+                //     const item = items[data.code] ?? ""
+                //     logContainer.textContent += `${data.date}:原料スキャン[${item}](${data.code})\r\n`
+                //     break
             }
 
 
