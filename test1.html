@@ -63,6 +63,7 @@
     <button id="connect-btn">接続</button>
     <button id="clear-btn">ログクリア</button>
     <span id="status" class="disconnected">未接続</span>
+    <button id="download-btn">ダウンロード</button>
   </div>
 
   <div id="log"></div>
@@ -71,11 +72,58 @@
     let port             = null
     let reader           = null
     let keepReading      = false
-    const connectBtn     = document.getElementById('connect-btn')
-    const clearBtn       = document.getElementById('clear-btn'  )
-    const baudrateSelect = document.getElementById('baudrate'   )
-    const statusText     = document.getElementById('status'     )
-    const logContainer   = document.getElementById('log'        )
+    const connectBtn     = document.getElementById('connect-btn' )
+    const clearBtn       = document.getElementById('clear-btn'   )
+    const baudrateSelect = document.getElementById('baudrate'    )
+    const statusText     = document.getElementById('status'      )
+    const logContainer   = document.getElementById('log'         )
+    const downloadBtn    = document.getElementById("download-btn")
+
+    downloadBtn.addEventListener("click", () => {
+      // 出力対象のテキストを取得
+      const text     = logContainer.textContent
+      const fileName = "test.txt"
+      const blob = new Blob([text], { type: `${mimeType};charset=utf-8;` })
+
+    // 一時的なダウンロード用リンク要素の作成
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName
+
+    // リンクをDOMに追加してクリックを発火後、削除
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // メモリ解放
+    URL.revokeObjectURL(link.href);
+
+
+// // フォームの値を取得
+//     const content = document.getElementById('content').value;
+//     const baseFilename = document.getElementById('filename').value.trim() || 'download';
+//     const formatValue = document.getElementById('format').value.split('|');
+    
+//     const mimeType = formatValue[0];
+//     const extension = formatValue[1];
+//     const fullFilename = baseFilename.endsWith(extension) ? baseFilename : baseFilename + extension;
+
+//     // Blob（バイナリ巨大オブジェクト）の作成（文字化け防止のため BOM 付与/UTF-8指定）
+//     const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
+
+//     // 一時的なダウンロード用リンク要素の作成
+//     const link = document.createElement('a');
+//     link.href = URL.createObjectURL(blob);
+//     link.download = fullFilename;
+
+//     // リンクをDOMに追加してクリックを発火後、削除
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+
+//     // メモリ解放
+//     URL.revokeObjectURL(link.href);      
+    })
 
     // ログ書き込み処理
     // 書き込みをする前に一時的にQueueに追加
@@ -164,36 +212,7 @@
                     logContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
                   }
                   break
-
-                // case "10": // 担当者
-                //     const members = {
-                //         "1000053477087" : "鈴木 悠太   "   ,
-                //         "1000053454521" : "亀井　佐和子",
-                //         "1000053477537" : "村田　真由美"  ,
-                //         "1000053477193" : "斎藤　典子  ",
-                //     }
-                //     const member = members[data.code] ?? ""
-                //     logContainer.textContent += `${data.date}:担当者変更[${member}](${data.code})\r\n`
-                //     break
-                // case "20": // 帳票
-
-                //     break
-                // case "30": // 品目
-                //     const items = {
-                //         "3000010084707" : "おいしさプラス調味酢"   ,
-                //         "3000010085100" : "Ｇ味の素ＫＫコンソメＪ　５００ｇ袋　Ａ",
-                //         "3000010085209" : "シェフリッチ５２Ｈ"  ,
-                //         "3000010085308" : "タピオカ澱粉ES-5",
-                //     }
-                //     const item = items[data.code] ?? ""
-                //     logContainer.textContent += `${data.date}:原料スキャン[${item}](${data.code})\r\n`
-                //     break
             }
-
-
-            // // 日付:コード.結果
-            // logContainer.textContent += `${data.date}:${data.code}.${data.result}\r\n`
-            // logContainer.scrollTop    = logContainer.scrollHeight
         }
 
         logQueue = splitLog[splitLog.length - 1]
