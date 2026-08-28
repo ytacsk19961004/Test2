@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JANコード バーコード作成ツール</title>
+    <!-- バーコード生成ライブラリ (JsBarcode) -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
         :root {
@@ -71,6 +72,28 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
         }
 
+        .hint {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .info-box {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #166534;
+            text-align: left;
+        }
+
+        .info-box strong {
+            color: #15803d;
+        }
+
         .error-message {
             color: var(--error-color);
             font-size: 0.875rem;
@@ -116,10 +139,13 @@
     <h1>JANバーコード生成</h1>
     
     <div class="input-group">
-        <label for="janInput">JANコード (13桁 または 8桁)</label>
-        <input type="text" id="janInput" placeholder="例: 4901234567894" maxlength="13" autocomplete="off">
+        <label for="janInput">JANコードを入力</label>
+        <input type="text" id="janInput" placeholder="例: 490123456789 (12桁で自動計算)" maxlength="13" autocomplete="off">
+        <div class="hint">12桁/7桁入力 → チェックデジットを自動計算<br>13桁/8桁入力 → そのまま生成＆正誤チェック</div>
         <div id="errorMessage" class="error-message"></div>
     </div>
+
+    <div id="infoBox" class="info-box"></div>
 
     <div class="barcode-area">
         <svg id="barcode"></svg>
@@ -132,9 +158,30 @@
     const janInput = document.getElementById('janInput');
     const barcodeSvg = document.getElementById('barcode');
     const errorMessage = document.getElementById('errorMessage');
+    const infoBox = document.getElementById('infoBox');
     const downloadBtn = document.getElementById('downloadBtn');
 
-    // JANコード入力時のイベントハンドラ
+    let currentFullCode = '';
+
+    // チェックデジット計算（モジュラス10 ウェイト3-1）
+    function calculateCheckDigit(codeWithoutCd) {
+        const digits = codeWithoutCd.split('').map(Number);
+        const is12Digit = digits.length === 12; // 13桁化用（12桁入力）か8桁化用（7桁入力）か
+        
+        let sum = 0;
+        for (let i = 0; i < digits.length; i++) {
+            // JAN-13(12桁入力)の場合: 右端から数えて奇数位置(配列の1, 3, 5...)に3を掛ける
+            // JAN-8(7桁入力)の場合: 右端から数えて奇数位置(配列の0, 2, 4...)に3を掛ける
+            const positionFromRight = digits.length - i;
+            const weight = (positionFromRight % 2 === 1) ? 3 : 1;
+            sum += digits[i] * weight;
+        }
+        
+        const remainder = sum % 10;
+        return (10 - remainder) % 10;
+    }
+
+    // 入力監視イベント
     janInput.addEventListener('input', () => {
         const value = janInput.value.trim();
         
@@ -144,26 +191,46 @@
             return;
         }
 
-        // 数字以外の文字を除外（自動補正）
+        // 数字以外の文字を除外
         if (!/^\d+$/.test(value)) {
             showError('半角数字のみ入力してください。');
             return;
         }
 
-        // 桁数チェック (EAN-13 / EAN-8)
-        if (value.length === 13 || value.length === 8) {
-            generateBarcode(value);
-        } else {
-            showError(`桁数が不十分です（現在 ${value.length} 桁 / 8桁または13桁必要）`);
+        let fullCode = value;
+
+        // 12桁入力時: 13桁目のチェックデジットを自動計算
+        if (value.length === 12) {
+            const cd = calculateCheckDigit(value);
+            fullCode = value + cd;
+            showInfo(`12桁検知: チェックデジット <strong>[${cd}]</strong> を自動補完しました`);
+            generateBarcode(fullCode);
+        }
+        // 7桁入力時: 8桁目のチェックデジットを自動計算
+        else if (value.length === 7) {
+            const cd = calculateCheckDigit(value);
+            fullCode = value + cd;
+            showInfo(`7桁検知: チェックデジット <strong>[${cd}]</strong> を自動補完しました`);
+            generateBarcode(fullCode);
+        }
+        // 13桁または8桁のフル指定時
+        else if (value.length === 13 || value.length === 8) {
+            hideInfo();
+            generateBarcode(fullCode);
+        } 
+        else {
+            showError(`桁数を入力してください（7, 8, 12, 13桁に対応）`);
             hideDownloadButton();
+            hideInfo();
+            barcodeSvg.innerHTML = '';
         }
     });
 
-    // バーコード生成関数
+    // バーコード生成処理
     function generateBarcode(code) {
         try {
             JsBarcode("#barcode", code, {
-                format: "EAN13", // EAN13設定で8桁(EAN8)も自動処理対応
+                format: "EAN13", // 8桁(EAN8)・13桁(EAN13)共に対応
                 width: 2,
                 height: 80,
                 displayValue: true,
@@ -171,30 +238,39 @@
                 margin: 10
             });
             
+            currentFullCode = code;
             hideError();
             downloadBtn.style.display = 'block';
         } catch (e) {
-            // チェックデジジット不正などのエラー処理
-            showError('無効なJANコードです（チェックデジットを確認してください）');
+            showError('無効なJANコードです（チェックデジットが一致しません）');
             hideDownloadButton();
         }
     }
 
-    // 表示のクリア処理
+    // 表示クリア・ユーティリティ関数群
     function clearBarcode() {
         barcodeSvg.innerHTML = '';
         hideError();
+        hideInfo();
         hideDownloadButton();
     }
 
     function showError(msg) {
         errorMessage.textContent = msg;
         errorMessage.style.display = 'block';
-        barcodeSvg.innerHTML = '';
     }
 
     function hideError() {
         errorMessage.style.display = 'none';
+    }
+
+    function showInfo(msg) {
+        infoBox.innerHTML = msg;
+        infoBox.style.display = 'block';
+    }
+
+    function hideInfo() {
+        infoBox.style.display = 'none';
     }
 
     function hideDownloadButton() {
@@ -215,7 +291,6 @@
             canvas.height = image.height;
             const context = canvas.getContext('2d');
             
-            // 背景色を白にする
             context.fillStyle = '#FFFFFF';
             context.fillRect(0, 0, canvas.width, canvas.height);
             context.drawImage(image, 0, 0);
@@ -223,7 +298,7 @@
             const png = canvas.toDataURL('image/png');
             const downloadLink = document.createElement('a');
             downloadLink.href = png;
-            downloadLink.download = `JAN_${janInput.value}.png`;
+            downloadLink.download = `JAN_${currentFullCode}.png`;
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
