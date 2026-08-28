@@ -161,7 +161,7 @@
                     let itemNo   = data.code.substring(4,  8)
                     let itemId   = data.code.substring(8, 16)
                     let itemName = items[itemId] ?? itemId
-                    logContainer.textContent += `${data.date}|計量品目[${itemName}]|検証結果[${data.result}]\r\n`
+                    logContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
                   }
                   break
 
