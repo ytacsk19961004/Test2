@@ -64,7 +64,9 @@ window.addEventListener("load", () => {
 
     ClearButton   .addEventListener("click", clearLog   )
     DownloadButton.addEventListener("click", downloadLog)
-    ConnectButton .addEventListener("click", connectCOM )
+    ConnectButton .addEventListener("click", function() {
+        connectCOM()
+    })
 })
 
 function clearLog(){
@@ -107,7 +109,7 @@ async function connectCOM() {
         // ポートに接続
         await port.open({ baudRate : 9600 })
         statusText.textContent = "接続中"
-        statusText.className = 'connected'
+        statusText.className   = 'connected'
 
         ConnectButton.textContent = '切断'
         // 接続中に更新
