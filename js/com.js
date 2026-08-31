@@ -95,6 +95,24 @@ function downloadLog() {
     URL.revokeObjectURL(link.href);
 }
 
+async function disconnectCOM() {
+    connecting = false
+    
+    if (reader) {
+        await reader.cancel()
+    }
+
+    if (port) {
+        await port.close();
+        port = null;
+    }
+
+    // UI表示の初期化
+    StatusText   .textContent = '未接続'
+    StatusText   .className = 'disconnected'
+    ConnectButton.textContent = '接続'
+}
+
 async function connectCOM() {
     if (!isSupportSerialAPI()) {
         // Serial APIのサポート無し
