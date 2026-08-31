@@ -108,8 +108,8 @@ async function connectCOM() {
         console.log(port)
         // ポートに接続
         await port.open({ baudRate : 9600 })
-        statusText.textContent = "接続中"
-        statusText.className   = 'connected'
+        StatusText.textContent = "接続中"
+        StatusText.className   = 'connected'
 
         ConnectButton.textContent = '切断'
         // 接続中に更新
