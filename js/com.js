@@ -67,32 +67,6 @@ window.addEventListener("load", () => {
     DownloadButton.addEventListener("click", downloadLog)
     ConnectButton .addEventListener("click", connectCOM )
 
-    async function connectCOM() {
-        if (!isSupportSerialAPI()) {
-            // Serial APIのサポート無し
-            alert("お使いのブラウザはWeb Serial APIに対応していません。")
-            return
-        }
-
-        try {
-            // 接続ポートを選択
-            port = await navigator.serial.requestPort()
-            console.log(port)
-            // ポートに接続
-            await port.open({ baudRate : 9600 })
-            statusText.textContent = "接続中"
-            statusText.className = 'connected'
-
-            ConnectButton.textContent = '切断'
-            readLoop()
-            // 接続中に更新
-            connecting = true
-            // baudrateSelect.disabled = true;
-          }
-        }
-        } catch(e) {
-            alert("接続無し")
-    }
 
     // async function connect() {
 
@@ -133,3 +107,28 @@ function downloadLog() {
     URL.revokeObjectURL(link.href);
 }
 
+async function connectCOM() {
+    if (!isSupportSerialAPI()) {
+        // Serial APIのサポート無し
+        alert("お使いのブラウザはWeb Serial APIに対応していません。")
+        return
+    }
+
+    try {
+        // 接続ポートを選択
+        port = await navigator.serial.requestPort()
+        console.log(port)
+        // ポートに接続
+        await port.open({ baudRate : 9600 })
+        statusText.textContent = "接続中"
+        statusText.className = 'connected'
+
+        ConnectButton.textContent = '切断'
+        readLoop()
+        // 接続中に更新
+        connecting = true
+        // baudrateSelect.disabled = true;
+    } catch(e) {
+        alert("接続無し")
+    }
+}
