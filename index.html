@@ -263,21 +263,17 @@
   </header>
   <div class="content">
     <div class="content-menu">
-      <button>接続</button>
-      <button>ログのクリア</button>
-      <button>ダウンロード</button>
-      <button>使い方</button>
+      <button id="connect-btn">接続</button>
+      <button id="clear-btn">ログクリア</button>
+      <button id="download-btn">ダウンロード</button>
+      <button id="usage-btn">使い方</button>
     </div>
     <div class="content-main">
-      aiueoaiueoaiueo
+      <div id="log"></div>
     </div>
   </div>
 
-
-
-
-
-
+  
   <h2>COMポートリアルタイム受信テストV0.5</h2>
 
   <div class="controls">
@@ -290,13 +286,9 @@
       <option value="57600">57600</option>
     </select>
 
-    <button id="connect-btn">接続</button>
-    <button id="clear-btn">ログクリア</button>
     <span id="status" class="disconnected">未接続</span>
-    <button id="download-btn">ダウンロード</button>
   </div>
 
-  <div id="log"></div>
 
   <script>
     let port             = null
