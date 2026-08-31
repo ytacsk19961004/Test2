@@ -52,6 +52,7 @@ function appendLog(baseText) {
 
     for(let i = 0;i < splitLog.length - 1;i++) {
         // ログを対象に処理
+        logContainer.textContent += splitLog[i] + "\r\n"
     }
 }    
 
