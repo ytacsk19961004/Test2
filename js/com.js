@@ -4,6 +4,13 @@ const DownloadButton = null
 const ClearButton    = null
 
 window.addEventListener("load", () => {
+    const ConnectButton  = document.getElementById('connect-btn' )
+    const ClearButton    = document.getElementById('clear-btn'   )
+    const LogContainer   = document.getElementById('log'         )
+    const DownloadButton = document.getElementById("download-btn")
+
+
+
     DownloadButton.addEventListener("click", downloadLog)
 })
 
