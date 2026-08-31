@@ -404,43 +404,43 @@
     //   logContainer.scrollTop = logContainer.scrollHeight;
     }
 
-    connectBtn.addEventListener('click', async () => {
-      if (port) {
-        await disconnect();
-      } else {
-        await connect();
-      }
-    });
+    // connectBtn.addEventListener('click', async () => {
+    //   if (port) {
+    //     await disconnect();
+    //   } else {
+    //     await connect();
+    //   }
+    // });
 
-    // 接続処理
-    async function connect() {
-      if (!('serial' in navigator)) {
-        alert('お使いのブラウザはWeb Serial APIに対応していません。ChromeまたはEdgeを使用してください。');
-        return;
-      }
+    // // 接続処理
+    // async function connect() {
+    //   if (!('serial' in navigator)) {
+    //     alert('お使いのブラウザはWeb Serial APIに対応していません。ChromeまたはEdgeを使用してください。');
+    //     return;
+    //   }
 
-      try {
-        port = await navigator.serial.requestPort();
-        const baudRate = parseInt(baudrateSelect.value, 10);
+    //   try {
+    //     port = await navigator.serial.requestPort();
+    //     const baudRate = parseInt(baudrateSelect.value, 10);
         
-        await port.open({ baudRate });
+    //     await port.open({ baudRate });
 
-        statusText.textContent = '接続中';
-        statusText.className = 'connected';
-        connectBtn.textContent = '切断';
-        baudrateSelect.disabled = true;
+    //     statusText.textContent = '接続中';
+    //     statusText.className = 'connected';
+    //     connectBtn.textContent = '切断';
+    //     baudrateSelect.disabled = true;
 
-        keepReading = true;
-        appendLog('--- ポートを開きました（即時表示モード） ---\n');
+    //     keepReading = true;
+    //     appendLog('--- ポートを開きました（即時表示モード） ---\n');
 
-        readLoop();
+    //     readLoop();
 
-      } catch (error) {
-        console.error('接続エラー:', error);
-        appendLog(`\n[エラー]: ${error.message}\n`);
-        resetState();
-      }
-    }
+    //   } catch (error) {
+    //     console.error('接続エラー:', error);
+    //     appendLog(`\n[エラー]: ${error.message}\n`);
+    //     resetState();
+    //   }
+    // }
 
     // 即時出力対応の受信ループ
     async function readLoop() {

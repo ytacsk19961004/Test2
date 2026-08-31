@@ -34,6 +34,12 @@ window.addEventListener("load", () => {
             // ポートに接続
             await port.open({ 9600 })
             statusText.textContent = "接続中"
+            statusText.className = 'connected'
+
+            ConnectButton.textContent = '切断'
+            // baudrateSelect.disabled = true;
+
+
 
 
 
@@ -53,15 +59,6 @@ window.addEventListener("load", () => {
     // async function connect() {
 
     //   try {
-    //     const baudRate = parseInt(baudrateSelect.value, 10);
-        
-    //     await port.open({ baudRate });
-
-    //     statusText.textContent = '接続中';
-    //     statusText.className = 'connected';
-    //     connectBtn.textContent = '切断';
-    //     baudrateSelect.disabled = true;
-
     //     keepReading = true;
     //     appendLog('--- ポートを開きました（即時表示モード） ---\n');
 
