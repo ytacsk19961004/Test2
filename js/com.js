@@ -65,7 +65,7 @@ window.addEventListener("load", () => {
     ClearButton   .addEventListener("click", clearLog   )
     DownloadButton.addEventListener("click", () => {
         downloadLog()
-    }))
+    })
     ConnectButton .addEventListener("click", async () => {
         console.log(connecting)
         if(connecting) {
