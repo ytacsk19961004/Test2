@@ -39,6 +39,7 @@ window.addEventListener("load", () => {
 
             ConnectButton.textContent = '切断'
             // baudrateSelect.disabled = true;
+            return
 
             // 読み込み処理を開始
             reader = port.readable.getReader()
