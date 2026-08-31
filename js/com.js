@@ -39,9 +39,9 @@ async function readLoop() {
  * ログの追加処理
  */
 function appendLog(baseText) {
-    console.log(text)
     // 改行コードを[\r\n]に補正
     const text = baseText.replace(/\r\n|\r|\n/g, '\r\n')
+    console.log(text)
     // 補正したテキストをキューに追加
     logQueue += text
     // 改行文字で分割
