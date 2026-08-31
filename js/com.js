@@ -1,5 +1,10 @@
+const ConnectButton  = null
+const DownloadButton = null
+const ClearButton   = null
+const a = null
 
-window.addEventListener("load", () => {
+
+document.addEventListener("load", () => {
 
 
 
