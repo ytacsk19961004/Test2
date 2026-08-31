@@ -33,14 +33,59 @@ window.addEventListener("load", () => {
             port = await navigator.serial.requestPort()
             console.log(port)
             // ポートに接続
-            await port.open({ 9600 })
+            await port.open({ baudRate : 9600 })
             statusText.textContent = "接続中"
             statusText.className = 'connected'
 
             ConnectButton.textContent = '切断'
             // baudrateSelect.disabled = true;
 
+            // 読み込み処理を開始
+            reader = port.readable.getReader()
+            const decoder = new TextDecoder()
 
+            while(true) {
+                const { value, done } = await reader.read()
+
+
+            }
+
+
+
+      try {
+        while (keepReading) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          if (value && value.length > 0) {
+            // 1. テキストに変換（改行を待たずに即時出力）
+            const text = decoder.decode(value, { stream: true });
+            const time = new Date().toLocaleTimeString();
+
+            
+
+            appendLog(text)
+
+            
+            // // 2. 16進数（HEX）文字列を作成（デバッグ用）
+            // const hex = Array.from(value)
+            //   .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+            //   .join(' ');
+
+            // const time = new Date().toLocaleTimeString();
+
+            // // 受信したブロックごとに時刻・テキスト・HEXを表示
+            // appendLog(`[${time}] TEXT: "${text}" | HEX: [${hex}]\n`);
+          }
+        }
+      } catch (error) {
+        if (keepReading) {
+          console.error('受信エラー:', error);
+          appendLog(`\n[受信エラー]: ${error.message}\n`);
+        }
+      } finally {
+        reader.releaseLock();
+      }
 
 
 
