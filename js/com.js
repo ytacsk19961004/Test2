@@ -66,19 +66,6 @@ window.addEventListener("load", () => {
     ClearButton   .addEventListener("click", clearLog   )
     DownloadButton.addEventListener("click", downloadLog)
     ConnectButton .addEventListener("click", connectCOM )
-
-
-    // async function connect() {
-
-    //   try {
-    //     keepReading = true;
-    //     appendLog('--- ポートを開きました（即時表示モード） ---\n');
-
-    //     readLoop();
-
-    //   } catch (error) {
-    //   }
-    // }    
 )
 
 function clearLog(){
@@ -124,10 +111,9 @@ async function connectCOM() {
         statusText.className = 'connected'
 
         ConnectButton.textContent = '切断'
-        readLoop()
         // 接続中に更新
         connecting = true
-        // baudrateSelect.disabled = true;
+        readLoop()
     } catch(e) {
         alert("接続無し")
     }
