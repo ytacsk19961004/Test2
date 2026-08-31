@@ -1,10 +1,18 @@
-document.addEventListener("load", () => {
-    alert("!")
+
+window.addEventListener("load", () => {
 
 
 
 
 })
+
+/**
+ * ログのダウンロード処理
+ */
+function downloadLog() {
+
+
+}
 
 
 //   <script>
