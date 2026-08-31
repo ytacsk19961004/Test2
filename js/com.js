@@ -65,6 +65,7 @@ window.addEventListener("load", () => {
     ClearButton   .addEventListener("click", clearLog   )
     DownloadButton.addEventListener("click", downloadLog)
     ConnectButton .addEventListener("click", async () => {
+        console.log(connecting)
         if(connecting) {
             disconnectCOM()
         } else {
@@ -138,7 +139,6 @@ async function connectCOM() {
         connecting = true
         readLoop()
     } catch(e) {
-        alert("接続無し")
-        alert(e)
+        console.log(e)
     }
 }
