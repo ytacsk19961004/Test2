@@ -63,7 +63,9 @@ window.addEventListener("load", () => {
     StatusText     = document.getElementById("status-text" )
 
     ClearButton   .addEventListener("click", clearLog   )
-    DownloadButton.addEventListener("click", downloadLog)
+    DownloadButton.addEventListener("click", () => {
+        downloadLog()
+    }))
     ConnectButton .addEventListener("click", async () => {
         console.log(connecting)
         if(connecting) {
@@ -81,7 +83,7 @@ function clearLog(){
 
 function downloadLog() {
     // ダウンロード対象のテキストを取得
-    const logText  = logContainer.textContent
+    const logText  = LogContainer.textContent
     // ダウンロード：ファイル名
     const fileName = "test.txt"
     // ダウンロード：ファイル内容
