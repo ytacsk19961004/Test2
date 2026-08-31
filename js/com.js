@@ -31,6 +31,7 @@ window.addEventListener("load", () => {
         try {
             // 接続ポートを選択
             port = await navigator.serial.requestPort()
+            console.log(port)
             // ポートに接続
             await port.open({ 9600 })
             statusText.textContent = "接続中"
