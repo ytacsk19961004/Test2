@@ -3,9 +3,7 @@ const ConnectButton  = null
 const DownloadButton = null
 const ClearButton    = null
 
-alert("A1")
 window.addEventListener("load", () => {
-    alert("B1")
     DownloadButton.addEventListener("click", downloadLog)
 })
 
@@ -19,51 +17,18 @@ function downloadLog() {
     const fileName = "test.txt"
     // ダウンロード：ファイル内容
     const fileBlob = new Blob([logText], { type: `${"text/plain"};charset=utf-8;` }) 
+    // 一時的なダウンロード用リンクの作成
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(fileBlob)
+    link.download = fileName
 
-//     // 一時的なダウンロード用リンク要素の作成
-//     const link = document.createElement('a');
-//     link.href = URL.createObjectURL(blob);
-//     link.download = fileName
+    // リンクをDOMに追加してクリックを発火後、削除
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-//     // リンクをDOMに追加してクリックを発火後、削除
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
-
-//     // メモリ解放
-//     URL.revokeObjectURL(link.href);
-
-
-// // // フォームの値を取得
-// //     const content = document.getElementById('content').value;
-// //     const baseFilename = document.getElementById('filename').value.trim() || 'download';
-// //     const formatValue = document.getElementById('format').value.split('|');
-    
-// //     const mimeType = formatValue[0];
-// //     const extension = formatValue[1];
-// //     const fullFilename = baseFilename.endsWith(extension) ? baseFilename : baseFilename + extension;
-
-// //     // Blob（バイナリ巨大オブジェクト）の作成（文字化け防止のため BOM 付与/UTF-8指定）
-// //     const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
-
-// //     // 一時的なダウンロード用リンク要素の作成
-// //     const link = document.createElement('a');
-// //     link.href = URL.createObjectURL(blob);
-// //     link.download = fullFilename;
-
-// //     // リンクをDOMに追加してクリックを発火後、削除
-// //     document.body.appendChild(link);
-// //     link.click();
-// //     document.body.removeChild(link);
-
-// //     // メモリ解放
-// //     URL.revokeObjectURL(link.href);      
-//     })
-
-//     // ログ書き込み処理
-//     // 書き込みをする前に一時的にQueueに追加
-//     var logQueue = ""
-
+    // メモリ解放
+    URL.revokeObjectURL(link.href);
 }
 
 
