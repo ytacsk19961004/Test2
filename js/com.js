@@ -9,6 +9,9 @@ let connecting     = false
 let logQueue       = ""
 
 
+/**
+ * [Web Serial API]のサポート確認
+ */
 function isSupportSerialAPI() {
     return 'serial' in navigator
 }
@@ -18,7 +21,9 @@ async function readLoop() {
     reader = port.readable.getReader()
     const decoder = new TextDecoder()
 
-    while(true) {
+    // 接続中の間はループを続ける
+    while(connecting) {
+        // ストリームから値を取得
         const { value, done } = await reader.read()
         // 読み込みに失敗した場合は終了する
         if (done) break
@@ -30,7 +35,6 @@ async function readLoop() {
         appendLog(text)
     }
 }
-
 
 /**
  * ログの追加処理
