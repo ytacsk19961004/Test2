@@ -5,6 +5,9 @@ let ClearButton    = null
 let StatusText     = null
 
 let port           = null
+let connecting     = false
+let logQueue       = ""
+
 
 function isSupportSerialAPI() {
     return 'serial' in navigator
@@ -28,7 +31,6 @@ async function readLoop() {
     }
 }
 
-let logQueue = ""
 
 /**
  * ログの追加処理
@@ -77,15 +79,14 @@ window.addEventListener("load", () => {
             statusText.className = 'connected'
 
             ConnectButton.textContent = '切断'
+            readLoop()
+            // 接続中に更新
+            connecting = true
             // baudrateSelect.disabled = true;
           }
         }
         } catch(e) {
             alert("接続無し")
-    }
-
-    async function readLoop() {
-
     }
 
     // async function connect() {
@@ -99,7 +100,7 @@ window.addEventListener("load", () => {
     //   } catch (error) {
     //   }
     // }    
-})
+)
 
 function clearLog(){
     LogContainer.textContent = ""
