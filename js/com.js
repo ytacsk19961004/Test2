@@ -8,7 +8,6 @@ let port           = null
 let connecting     = false
 let logQueue       = ""
 
-
 /**
  * [Web Serial API]のサポート確認
  */
@@ -116,5 +115,6 @@ async function connectCOM() {
         readLoop()
     } catch(e) {
         alert("接続無し")
+        alert(e)
     }
 }
