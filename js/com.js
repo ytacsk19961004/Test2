@@ -10,13 +10,15 @@ window.addEventListener("load", () => {
     const DownloadButton = document.getElementById("download-btn")
 
 
-
+    ClearButton   .addEventListener("click", clearLog   )
     DownloadButton.addEventListener("click", downloadLog)
 })
 
-/**
- * ログのダウンロード処理
- */
+function clearLog(){
+    LogContainer.textContent = ""
+}
+
+
 function downloadLog() {
     // ダウンロード対象のテキストを取得
     const logText  = logContainer.textContent
