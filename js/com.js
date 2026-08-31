@@ -1,17 +1,75 @@
-const LogContainer   = null
-const ConnectButton  = null
-const DownloadButton = null
-const ClearButton    = null
+let LogContainer   = null
+let ConnectButton  = null
+let DownloadButton = null
+let ClearButton    = null
+let StatusText     = null
+
+let port           = null
+
+function isSupportSerialAPI() {
+    return 'serial' in navigator
+}
 
 window.addEventListener("load", () => {
-    const ConnectButton  = document.getElementById('connect-btn' )
-    const ClearButton    = document.getElementById('clear-btn'   )
-    const LogContainer   = document.getElementById('log'         )
-    const DownloadButton = document.getElementById("download-btn")
-
+    ConnectButton  = document.getElementById('connect-btn' )
+    ClearButton    = document.getElementById('clear-btn'   )
+    LogContainer   = document.getElementById('log'         )
+    DownloadButton = document.getElementById("download-btn")
+    StatusText     = document.getElementById("status-text" )
 
     ClearButton   .addEventListener("click", clearLog   )
     DownloadButton.addEventListener("click", downloadLog)
+    ConnectButton .addEventListener("click", connectCOM )
+
+    async function connectCOM() {
+        if (!isSupportSerialAPI()) {
+            // Serial APIのサポート無し
+            alert("お使いのブラウザはWeb Serial APIに対応していません。")
+            return
+        }
+
+        try {
+            // 接続ポートを選択
+            port = await navigator.serial.requestPort()
+            // ポートに接続
+            await port.open({ 9600 })
+            statusText.textContent = "接続中"
+
+
+
+
+
+
+
+        } catch(e) {
+            alert("接続無し")
+    //     console.error('接続エラー:', error);
+    //     appendLog(`\n[エラー]: ${error.message}\n`);
+    //     resetState();
+        }
+
+    }
+
+    // async function connect() {
+
+    //   try {
+    //     const baudRate = parseInt(baudrateSelect.value, 10);
+        
+    //     await port.open({ baudRate });
+
+    //     statusText.textContent = '接続中';
+    //     statusText.className = 'connected';
+    //     connectBtn.textContent = '切断';
+    //     baudrateSelect.disabled = true;
+
+    //     keepReading = true;
+    //     appendLog('--- ポートを開きました（即時表示モード） ---\n');
+
+    //     readLoop();
+
+    //   } catch (error) {
+    //   }
+    // }    
 })
 
 function clearLog(){
@@ -45,31 +103,9 @@ function downloadLog() {
 //     let port             = null
 //     let reader           = null
 //     let keepReading      = false
-//     const connectBtn     = document.getElementById('connect-btn' )
-//     const clearBtn       = document.getElementById('clear-btn'   )
 //     const baudrateSelect = document.getElementById('baudrate'    )
 //     const statusText     = document.getElementById('status'      )
-//     const logContainer   = document.getElementById('log'         )
-//     const downloadBtn    = document.getElementById("download-btn")
 
-//     downloadBtn.addEventListener("click", () => {
-//       // 出力対象のテキストを取得
-//       const text     = logContainer.textContent
-//       const fileName = "test.txt"
-//       const blob = new Blob([text], { type: `${"text/plain"};charset=utf-8;` })
-
-//     // 一時的なダウンロード用リンク要素の作成
-//     const link = document.createElement('a');
-//     link.href = URL.createObjectURL(blob);
-//     link.download = fileName
-
-//     // リンクをDOMに追加してクリックを発火後、削除
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
-
-//     // メモリ解放
-//     URL.revokeObjectURL(link.href);
 
 
 // // // フォームの値を取得
