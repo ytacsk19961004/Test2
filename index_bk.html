@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JANコード読み取りデモ</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+    #reader {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-top: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>JANコード スキャナー</h2>
+
+  <div id="reader"></div>
+
+  <div class="input-group">
+    <label for="jan_code">読み取り結果 (JANコード)：</label>
+    <input type="text" id="jan_code" placeholder="カメラにかざすと自動入力されます" readonly>
+  </div>
+
+  <button id="restart-btn" style="display: none;" onclick="startScanner()">再スキャン</button>
+
+  <script>
+    let html5QrCode;
+
+    function startScanner() {
+      document.getElementById('restart-btn').style.display = 'none';
+      document.getElementById('jan_code').value = '';
+
+      if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode("reader");
+      }
+
+      // JANコード（EAN-13, EAN-8）のみを対象に設定
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 150 },
+        formatsToSupport: [
+          // Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8
+        ]
+      };
+
+      // 背面カメラで起動
+      html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess
+      ).catch(err => {
+        console.error("カメラ起動エラー:", err);
+        alert("カメラの起動に失敗しました。HTTPSで接続されているか確認してください。");
+      });
+    }
+
+    // スキャン成功時の処理
+    function onScanSuccess(decodedText, decodedResult) {
+      // inputに取得したJANコードを格納
+      document.getElementById("jan_code").value = decodedText
+
+      // 読み取り完了後にカメラを停止
+      // html5QrCode.stop().then(() => {
+      //   document.getElementById('restart-btn').style.display = 'inline-block';
+      // }).catch(err => {
+      //   console.error("停止エラー:", err);
+      // });
+    }
+
+    // ページ読み込み時にスキャナーを開始
+    window.addEventListener('DOMContentLoaded', startScanner);
+  </script>
+
+</body>
+</html>

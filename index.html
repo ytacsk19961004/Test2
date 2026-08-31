@@ -3,102 +3,569 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JANコード読み取りデモ</title>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <title>COMポートリアルタイム受信テスト</title>
   <style>
     body {
       font-family: sans-serif;
-      max-width: 500px;
+      max-width: 800px;
       margin: 20px auto;
-      padding: 0 16px;
+      padding: 0 20px;
+      background-color: #f4f4f9;
     }
-    #reader {
-      width: 100%;
-      margin-bottom: 20px;
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
     }
-    .input-group {
-      margin-top: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 10px;
-      padding: 10px 15px;
+    button, select {
+      padding: 8px 12px;
       font-size: 14px;
       cursor: pointer;
     }
+    #status {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .connected { color: green; }
+    .disconnected { color: red; }
+    
+    #log {
+      width: 100%;
+      height: 450px;
+       background-color:white;
+      /* background-color: #1e1e1e;
+      color: #00ff00; */
+      font-family: monospace;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow-y: scroll;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    * {
+      margin    : 0;
+      padding   : 0;
+      box-sizing: border-box;
+      font-family: "Meiryo";
+    }
+
+    body {
+      display          : flex;
+      flex-direction   : column;
+      min-height       : 100vh;
+    }
+
+    header {
+      background-color : #333;
+      color            : #fff;
+      padding          : 16px;
+      height           : 64px;
+
+      border-color: #cccccc;
+      border-style: solid;
+      border-width: 0px 0px 1px 0px;
+    }
+
+    .header-title {
+      font-size : 24px;
+      font-weight: bold;
+    }
+
+    main {
+      flex             : 1;
+      display          : flex;
+      background-color : #f4f4f4;
+    }
+
+    main nav {
+      /* width            : px; */
+      border-color: #cccccc;
+      padding          : 20px;
+
+      border-color: #cccccc;
+      border-style: solid;
+      border-width: 0px 1px 0px 0px;
+
+    }
+
+    nav ul {
+      list-style-type: disc;
+    }
+
+    nav li {
+      cursor: pointer;
+      display: list-item;
+      unicode-bidi: isolate;
+      list-style: none;
+      font-size: 14px;
+      font-weight: normal;
+      margin: 0px;
+      padding: 0px;
+      color: #333333;
+      text-decoration: none;
+
+    }
+
+    nav a {
+      font-size: 14px;
+      font-weight: normal;
+      margin: 0px;
+      padding: 0px;
+      color: #333333;
+      text-decoration: none;
+    }
+
+    .content {
+      flex             : 1;
+      background-color : white;
+    }
+
+    .content-header {
+      font-size: 18px;
+      font-weight: normal;
+      padding: 8px 10px 5px 10px;
+      margin-bottom: 10px;
+      border-color: #cccccc;
+      border-style: solid;
+      border-width: 0px 0px 1px 0px;
+    }
+
+    section {
+            padding-left  : 10px;
+            padding-bottom: 10px;
+
+            padding-top   :  0px;
+            padding-right :  0px;
+
+            color: #333333;
+            font-family: "Meiryo";
+            font-size: 14px;
+            font-weight: normal;
+            margin: 0px;             
+    }
+
+
+        .file-select-info {
+            color: #333333;
+            font-family: "Meiryo";
+            font-size: 14px;
+            font-weight: normal;
+            margin: 0px;
+        }
+
+
+
+        .file-select-button {
+            font-size: .875rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .4rem .6rem;
+            font-weight: 600;
+            line-height: 1rem;
+            color: #000;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #000;
+            border-radius: 4px;
+            transition: opacity .3s;            
+        }
+
+        .a-file-select-button {
+            display: none;
+        }    
+
+        .convert-button {
+            cursor: pointer;
+            /* #106B9E; */
+            min-width: 120px;
+
+            font-size: .875rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .4rem .6rem;
+            font-weight: 600;
+            line-height: 1rem;
+            color: #000;
+            background-color: #fff;
+            border: 1px solid #000;
+            border-radius: 4px;
+            transition: opacity .3s;
+
+            background-color: #106B9E;
+            color : white;
+
+
+        }
+
+        .convert-button.disabled {
+            cursor: not-allowed;
+            background-color: #DBDBDB;
+            color: #888888;
+        }        
+
+        img {
+          width  : 16px;
+          height : 16px;
+        }
+
+        .file-convert-table {
+          display : table;
+          padding : 12px;
+          border-collapse: collapse;
+          text-align : center;
+        }
+
+        .file-convert-table > div {
+          display: table-row;
+        }
+
+        .file-convert-table > div > div {
+          display: table-cell;
+          border-top  : 1px solid gray;
+          border-left : 1px solid gray;
+          padding     : 4px;
+          vertical-align: middle;
+
+
+        }
+
+        .file-convert-table > div > div:last-child {
+          display      : table-cell;
+          border-right : 1px solid gray;
+        }
+
+        .file-convert-table > div:first-child > div {
+          text-align : center;
+          background-color : rgb(245, 245, 245)
+        }
+
+
+        .file-convert-table > div:last-child > div {
+          border-bottom : 1px solid gray;
+        }
+
+
+
+        .file-convert-table > div > div:nth-child(1) {
+          /* width : 128px;
+          background-color: green; */
+        }    
   </style>
 </head>
 <body>
+  <header>
+    <div class="header-title">計量記録保存</div>
+  </header>
 
-  <h2>JANコード スキャナー</h2>
 
-  <div id="reader"></div>
 
-  <div class="input-group">
-    <label for="jan_code">読み取り結果 (JANコード)：</label>
-    <input type="text" id="jan_code" placeholder="カメラにかざすと自動入力されます" readonly>
+
+
+
+  <h2>COMポートリアルタイム受信テストV0.5</h2>
+
+  <div class="controls">
+    <label for="baudrate">ボーレート:</label>
+    <select id="baudrate">
+      <option value="9600" selected>9600</option>
+      <option value="115200">115200</option>
+      <option value="19200">19200</option>
+      <option value="38400">38400</option>
+      <option value="57600">57600</option>
+    </select>
+
+    <button id="connect-btn">接続</button>
+    <button id="clear-btn">ログクリア</button>
+    <span id="status" class="disconnected">未接続</span>
+    <button id="download-btn">ダウンロード</button>
   </div>
 
-  <button id="restart-btn" style="display: none;" onclick="startScanner()">再スキャン</button>
+  <div id="log"></div>
 
   <script>
-    let html5QrCode;
+    let port             = null
+    let reader           = null
+    let keepReading      = false
+    const connectBtn     = document.getElementById('connect-btn' )
+    const clearBtn       = document.getElementById('clear-btn'   )
+    const baudrateSelect = document.getElementById('baudrate'    )
+    const statusText     = document.getElementById('status'      )
+    const logContainer   = document.getElementById('log'         )
+    const downloadBtn    = document.getElementById("download-btn")
 
-    function startScanner() {
-      document.getElementById('restart-btn').style.display = 'none';
-      document.getElementById('jan_code').value = '';
+    downloadBtn.addEventListener("click", () => {
+      // 出力対象のテキストを取得
+      const text     = logContainer.textContent
+      const fileName = "test.txt"
+      const blob = new Blob([text], { type: `${"text/plain"};charset=utf-8;` })
 
-      if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
+    // 一時的なダウンロード用リンク要素の作成
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName
+
+    // リンクをDOMに追加してクリックを発火後、削除
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // メモリ解放
+    URL.revokeObjectURL(link.href);
+
+
+// // フォームの値を取得
+//     const content = document.getElementById('content').value;
+//     const baseFilename = document.getElementById('filename').value.trim() || 'download';
+//     const formatValue = document.getElementById('format').value.split('|');
+    
+//     const mimeType = formatValue[0];
+//     const extension = formatValue[1];
+//     const fullFilename = baseFilename.endsWith(extension) ? baseFilename : baseFilename + extension;
+
+//     // Blob（バイナリ巨大オブジェクト）の作成（文字化け防止のため BOM 付与/UTF-8指定）
+//     const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
+
+//     // 一時的なダウンロード用リンク要素の作成
+//     const link = document.createElement('a');
+//     link.href = URL.createObjectURL(blob);
+//     link.download = fullFilename;
+
+//     // リンクをDOMに追加してクリックを発火後、削除
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+
+//     // メモリ解放
+//     URL.revokeObjectURL(link.href);      
+    })
+
+    // ログ書き込み処理
+    // 書き込みをする前に一時的にQueueに追加
+    var logQueue = ""
+
+    function appendLog(text) {
+        console.log(text)
+        const textCRLF = text.replace(/\r\n|\r|\n/g, '\r\n')
+        logQueue += textCRLF
+
+        // 改行文字で分割
+        let splitLog = logQueue.split("\r\n")
+        
+        for(let i = 0;i < splitLog.length - 1;i++) {
+            let text = splitLog[i]
+            let splitText = text.split(" ")
+            // 0 コード
+            // 1 2日次
+            // 3 OK NG
+            let data = {
+                code   : splitText[0],
+                date   : splitText[1] + " " + splitText[2],
+                result : splitText[3]
+            }
+
+            console.log(splitLog[i])
+
+            const reports = {
+              "00000338" : "調味料・ほうれん草コーン",
+              "00000339" : "共通食材・ほうれん草・コーン",
+            }
+
+            const items = {
+              "01008470" : "おいしさプラス調味酢",
+              "01008510" : "Ｇ味の素ＫＫコンソメＪ　５００ｇ袋　Ａ",
+              "01008520" : "シェフリッチ５２Ｈ",
+              "01008530" : "タピオカ澱粉ES-5　",
+              "01008460" : "冷凍ほうれん草",
+              "01008500" : "コーンカーネル",
+            }
+
+            // 記録者情報
+            const members = {
+              "05347708" : "鈴木 悠太",
+              "05345452" : "亀井　佐和子",
+              "05347753" : "村田　真由美",
+              "05347719" : "斎藤　典子",
+            }
+
+            switch(data.code.substring(0, 4)) {
+                case "1100": // 計量帳票の記録開始：[${name}]
+                  {
+                    let reportId   = data.code.substring(4, 12)
+                    let reportName = reports[reportId] ?? reportId
+                    logContainer.textContent += `${data.date}|帳票記録開始[${reportName}]\r\n`
+                  }
+                  break
+                case "1200": // 計量帳票の記録終了：[${name}]
+                  {
+                    let reportId   = data.code.substring(4, 12)
+                    let reportName = reports[reportId] ?? reportId
+                    logContainer.textContent += `${data.date}|帳票記録終了[${reportName}]\r\n`
+                  }
+                  break
+
+                case "2100": // 記録開始：[${name}]
+                  {
+                    let memberId   = data.code.substring(4, 12)
+                    let memberName = members[memberId] ?? memberId
+                    logContainer.textContent += `${data.date}|作業者開始[${memberName}]\r\n`
+                  }
+
+                  break
+                case "2200": // 記録終了：[${name}]
+                  {
+                    let memberId = data.code.substring(4, 12)
+                    let memberName = members[memberId] ?? memberId
+                    logContainer.textContent += `${data.date}|作業者終了[${memberName}]\r\n`
+                  }
+                  break
+                case "3100": // 計量品目
+                  {
+                    let itemNo   = data.code.substring(4,  8)
+                    let itemId   = data.code.substring(8, 16)
+                    let itemName = items[itemId] ?? itemId
+                    logContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
+                  }
+                  break
+            }
+        }
+
+        logQueue = splitLog[splitLog.length - 1]
+    
+
+
+
+
+        // const splitText = textCRLF.split("\r\n")
+
+
+    //   logContainer.textContent += textCRLF;
+    //   logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    connectBtn.addEventListener('click', async () => {
+      if (port) {
+        await disconnect();
+      } else {
+        await connect();
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      logContainer.textContent = '';
+    });
+
+    // 接続処理
+    async function connect() {
+      if (!('serial' in navigator)) {
+        alert('お使いのブラウザはWeb Serial APIに対応していません。ChromeまたはEdgeを使用してください。');
+        return;
       }
 
-      // JANコード（EAN-13, EAN-8）のみを対象に設定
-      const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 150 },
-        formatsToSupport: [
-          // Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.EAN_8
-        ]
-      };
+      try {
+        port = await navigator.serial.requestPort();
+        const baudRate = parseInt(baudrateSelect.value, 10);
+        
+        await port.open({ baudRate });
 
-      // 背面カメラで起動
-      html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        onScanSuccess
-      ).catch(err => {
-        console.error("カメラ起動エラー:", err);
-        alert("カメラの起動に失敗しました。HTTPSで接続されているか確認してください。");
-      });
+        statusText.textContent = '接続中';
+        statusText.className = 'connected';
+        connectBtn.textContent = '切断';
+        baudrateSelect.disabled = true;
+
+        keepReading = true;
+        appendLog('--- ポートを開きました（即時表示モード） ---\n');
+
+        readLoop();
+
+      } catch (error) {
+        console.error('接続エラー:', error);
+        appendLog(`\n[エラー]: ${error.message}\n`);
+        resetState();
+      }
     }
 
-    // スキャン成功時の処理
-    function onScanSuccess(decodedText, decodedResult) {
-      // inputに取得したJANコードを格納
-      document.getElementById("jan_code").value = decodedText
+    // 即時出力対応の受信ループ
+    async function readLoop() {
+      // ストリーム変換を使わず、バイナリ(Uint8Array)で直接受信
+      reader = port.readable.getReader();
+      const decoder = new TextDecoder();
 
-      // 読み取り完了後にカメラを停止
-      // html5QrCode.stop().then(() => {
-      //   document.getElementById('restart-btn').style.display = 'inline-block';
-      // }).catch(err => {
-      //   console.error("停止エラー:", err);
-      // });
+      try {
+        while (keepReading) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          if (value && value.length > 0) {
+            // 1. テキストに変換（改行を待たずに即時出力）
+            const text = decoder.decode(value, { stream: true });
+            const time = new Date().toLocaleTimeString();
+
+            
+
+            appendLog(text)
+
+            
+            // // 2. 16進数（HEX）文字列を作成（デバッグ用）
+            // const hex = Array.from(value)
+            //   .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+            //   .join(' ');
+
+            // const time = new Date().toLocaleTimeString();
+
+            // // 受信したブロックごとに時刻・テキスト・HEXを表示
+            // appendLog(`[${time}] TEXT: "${text}" | HEX: [${hex}]\n`);
+          }
+        }
+      } catch (error) {
+        if (keepReading) {
+          console.error('受信エラー:', error);
+          appendLog(`\n[受信エラー]: ${error.message}\n`);
+        }
+      } finally {
+        reader.releaseLock();
+      }
     }
 
-    // ページ読み込み時にスキャナーを開始
-    window.addEventListener('DOMContentLoaded', startScanner);
+    function resetState() {
+      keepReading = false;
+      port = null;
+      reader = null;
+      statusText.textContent = '未接続';
+      statusText.className = 'disconnected';
+      connectBtn.textContent = '接続';
+      baudrateSelect.disabled = false;
+    }
+
+    // 切断処理
+    async function disconnect() {
+      keepReading = false;
+
+      if (reader) {
+        try {
+          await reader.cancel();
+        } catch (e) {
+          console.warn('Reader cancel error:', e);
+        }
+      }
+
+      if (port) {
+        try {
+          if (port.readable || port.writable) {
+            await port.close();
+          }
+        } catch (e) {
+          console.warn('Port close error:', e);
+        }
+      }
+
+      resetState();
+      appendLog('--- 切断しました ---\n');
+    }
   </script>
-
 </body>
 </html>
