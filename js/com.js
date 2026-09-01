@@ -55,7 +55,21 @@ function appendLog(baseText) {
     }
 }    
 
-window.addEventListener("load", () => {
+const DATA_API_URL = "https://script.google.com/macros/s/AKfycbxWOgQ1dHJhtNi74e23TH2LV-YHdJsxJB02g8so8cYX3hPaY--oQvEnGbUG0L7hcP0o-w/exec"
+
+window.addEventListener("load", await () => {
+    // データを取得
+    const response = await fetch(DATA_API_URL, {
+        method  : "GET"   ,
+        redirect: "follow",
+    })
+    const data     = await response.json()
+
+    console.log(data)
+
+
+
+
     ConnectButton  = document.getElementById('connect-btn' )
     ClearButton    = document.getElementById('clear-btn'   )
     LogContainer   = document.getElementById('log'         )
