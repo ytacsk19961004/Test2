@@ -118,7 +118,7 @@ window.addEventListener("load", async () => {
         method  : "GET"   ,
         redirect: "follow",
     })
-    Data     = await response.json()
+    Data     = await response.json().data
     console.log(Data)
 
 
