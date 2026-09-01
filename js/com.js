@@ -114,11 +114,22 @@ const DATA_API_URL = "https://script.google.com/macros/s/AKfycbxWOgQ1dHJhtNi74e2
 
 
 window.addEventListener("load", async () => {
+    ConnectButton  = document.getElementById('connect-btn' )
+    ClearButton    = document.getElementById('clear-btn'   )
+    LogContainer   = document.getElementById('log'         )
+    DownloadButton = document.getElementById("download-btn")
+    StatusText     = document.getElementById("status-text" )
+
+    StatusText.textContent = "初期化中"
+
     // データを取得
     const response = await fetch(DATA_API_URL, {
         method  : "GET"   ,
         redirect: "follow",
     })
+    
+    StatusText.textContent = "未接続"
+
     Data     = (await response.json()).data
     
     console.log(Data)
@@ -126,11 +137,6 @@ window.addEventListener("load", async () => {
 
 
 
-    ConnectButton  = document.getElementById('connect-btn' )
-    ClearButton    = document.getElementById('clear-btn'   )
-    LogContainer   = document.getElementById('log'         )
-    DownloadButton = document.getElementById("download-btn")
-    StatusText     = document.getElementById("status-text" )
 
     ClearButton   .addEventListener("click", clearLog   )
     DownloadButton.addEventListener("click", () => {
