@@ -60,7 +60,7 @@ function appendLog(baseText) {
             result : splitText[3]
         }
 
-        switch(data.code) {
+        switch(data.code.substring(0, 4)) {
             case "1100": // 計量帳票：記録開始
                 {
                     let reportId   = data.code.substring(4, 12)
