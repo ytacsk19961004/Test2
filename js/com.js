@@ -67,28 +67,28 @@ function appendLog(baseText) {
                 {
                     let reportId   = data.code.substring(4, 12)
                     let reportName = Data["report"][reportId] ?? reportId
-                    logContainer.textContent += `${data.date}|帳票記録開始[${reportName}]\r\n`
+                    LogContainer.textContent += `${data.date}|帳票記録開始[${reportName}]\r\n`
                 }
                 break
             case "1200": // 計量帳票：記録終了
                 {
                     let reportId   = data.code.substring(4, 12)
                     let reportName = Data["report"][reportId] ?? reportId
-                    logContainer.textContent += `${data.date}|帳票記録終了[${reportName}]\r\n`
+                    LogContainer.textContent += `${data.date}|帳票記録終了[${reportName}]\r\n`
                 }
                 break
             case "2100": // 作業者：作業開始
                 {
                     let workerId   = data.code.substring(4, 12)
                     let workerName = Data["worker"][workerId] ?? workerId
-                    logContainer.textContent += `${data.date}|作業者開始[${workerName}]\r\n`
+                    LogContainer.textContent += `${data.date}|作業者開始[${workerName}]\r\n`
                 }
                 break
             case "2200": // 作業者：作業終了
                 {
                     let workerId   = data.code.substring(4, 12)
                     let workerName = Data["worker"][workerId] ?? workerId
-                    logContainer.textContent += `${data.date}|作業者終了[${workerName}]\r\n`
+                    LogContainer.textContent += `${data.date}|作業者終了[${workerName}]\r\n`
                 }
                 break
             case "3100": // 品目記録
@@ -96,7 +96,7 @@ function appendLog(baseText) {
                     let itemNo   = data.code.substring(4,  8)
                     let itemId   = data.code.substring(8, 16)
                     let itemName = Data["item"][itemId] ?? itemId
-                    logContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
+                    LogContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
                 }
                 break
             default:
