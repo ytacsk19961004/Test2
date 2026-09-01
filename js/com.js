@@ -51,7 +51,60 @@ function appendLog(baseText) {
 
     for(let i = 0;i < splitLog.length - 1;i++) {
         // ログを対象に処理
-        LogContainer.textContent += splitLog[i] + "\r\n"
+        let logText   = splitLog[i]
+        let splitText = logText.split(" ")
+
+        let data = {
+            code   : splitText[0],
+            date   : splitText[1] + " " + splitText[2],
+            result : splitText[3]
+        }
+
+        switch(data.code) {
+            case "1100": // 計量帳票：記録開始
+                {
+                    let reportId   = data.code.substring(4, 12)
+                    let reportName = Data["report"][reportId] ?? reportId
+                    logContainer.textContent += `${data.date}|帳票記録開始[${reportName}]\r\n`
+                }
+                break
+            case "1200": // 計量帳票：記録終了
+                {
+                    let reportId   = data.code.substring(4, 12)
+                    let reportName = Data["report"][reportId] ?? reportId
+                    logContainer.textContent += `${data.date}|帳票記録終了[${reportName}]\r\n`
+                }
+                break
+            case "2100": // 作業者：作業開始
+                {
+                    let workerId   = data.code.substring(4, 12)
+                    let workerName = data["worker"][workerId] ?? workerId
+                    logContainer.textContent += `${data.date}|作業者開始[${workerName}]\r\n`
+                }
+                break
+            case "2200": // 作業者：作業終了
+                {
+                    let workerId   = data.code.substring(4, 12)
+                    let workerName = data["worker"][workerId] ?? workerId
+                    logContainer.textContent += `${data.date}|作業者終了[${workerName}]\r\n`
+                }
+                break
+            case "3100": // 品目記録
+                {
+                    let itemNo   = data.code.substring(4,  8)
+                    let itemId   = data.code.substring(8, 16)
+                    let itemName = items["item"][itemId] ?? itemId
+                    logContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
+                }
+                break
+            default:
+                {
+                    LogContainer.textContent += splitLog[i] + "\r\n"
+                }
+                break
+        }
+
+
     }
 }    
 
