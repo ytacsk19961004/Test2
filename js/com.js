@@ -78,6 +78,9 @@ function appendLog(baseText) {
             case "2100": // 作業者：作業開始
                 {
                     let workerId   = data.code.substring(4, 12)
+                    console.log(data["worker"])
+                    console.log(workerId)
+                    console.log(data["worker"][workerId])
                     let workerName = data["worker"][workerId] ?? workerId
                     logContainer.textContent += `${data.date}|作業者開始[${workerName}]\r\n`
                 }
@@ -85,6 +88,9 @@ function appendLog(baseText) {
             case "2200": // 作業者：作業終了
                 {
                     let workerId   = data.code.substring(4, 12)
+                    console.log(data["worker"])
+                    console.log(workerId)
+                    console.log(data["worker"][workerId])
                     let workerName = data["worker"][workerId] ?? workerId
                     logContainer.textContent += `${data.date}|作業者終了[${workerName}]\r\n`
                 }
