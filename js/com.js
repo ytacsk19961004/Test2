@@ -7,6 +7,8 @@ let StatusText     = null
 let port           = null
 let connecting     = false
 let logQueue       = ""
+var Data = {}
+
 
 /**
  * [Web Serial API]のサポート確認
@@ -78,20 +80,14 @@ function appendLog(baseText) {
             case "2100": // 作業者：作業開始
                 {
                     let workerId   = data.code.substring(4, 12)
-                    console.log(data["worker"])
-                    console.log(workerId)
-                    console.log(data["worker"][workerId])
-                    let workerName = data["worker"][workerId] ?? workerId
+                    let workerName = Data["worker"][workerId] ?? workerId
                     logContainer.textContent += `${data.date}|作業者開始[${workerName}]\r\n`
                 }
                 break
             case "2200": // 作業者：作業終了
                 {
                     let workerId   = data.code.substring(4, 12)
-                    console.log(data["worker"])
-                    console.log(workerId)
-                    console.log(data["worker"][workerId])
-                    let workerName = data["worker"][workerId] ?? workerId
+                    let workerName = Data["worker"][workerId] ?? workerId
                     logContainer.textContent += `${data.date}|作業者終了[${workerName}]\r\n`
                 }
                 break
@@ -99,7 +95,7 @@ function appendLog(baseText) {
                 {
                     let itemNo   = data.code.substring(4,  8)
                     let itemId   = data.code.substring(8, 16)
-                    let itemName = items["item"][itemId] ?? itemId
+                    let itemName = Data["item"][itemId] ?? itemId
                     logContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
                 }
                 break
@@ -115,7 +111,6 @@ function appendLog(baseText) {
 }    
 
 const DATA_API_URL = "https://script.google.com/macros/s/AKfycbxWOgQ1dHJhtNi74e23TH2LV-YHdJsxJB02g8so8cYX3hPaY--oQvEnGbUG0L7hcP0o-w/exec"
-let Data = {}
 
 
 window.addEventListener("load", async () => {
