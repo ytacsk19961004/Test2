@@ -57,7 +57,7 @@ function appendLog(baseText) {
 
 const DATA_API_URL = "https://script.google.com/macros/s/AKfycbxWOgQ1dHJhtNi74e23TH2LV-YHdJsxJB02g8so8cYX3hPaY--oQvEnGbUG0L7hcP0o-w/exec"
 
-window.addEventListener("load", await () => {
+window.addEventListener("load", async () => {
     // データを取得
     const response = await fetch(DATA_API_URL, {
         method  : "GET"   ,
