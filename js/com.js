@@ -9,6 +9,14 @@ let connecting     = false
 let logQueue       = ""
 var Data = {}
 
+// 計量帳票
+
+const Commands = {
+    WeightReport : "WREP", // 計量帳票
+    Operator     : "OPR" , // 操作者
+    Item         : "ITEM", // 品目
+}
+
 
 /**
  * [Web Serial API]のサポート確認
@@ -57,46 +65,76 @@ function appendLog(baseText) {
         let splitText = logText.split(" ")
 
         let data = {
-            code   : splitText[0],
+            code   : splitText[0].split(":"),
             date   : splitText[1] + " " + splitText[2],
             result : splitText[3]
         }
+        // コードの分割長を取得
+        if(data.code.length == 1) {
+            // セパレート(:)を含まない場合は、品目と判定する
+            data.code = ["ITEM", ...data.code]
+        }
 
-        switch(data.code.substring(0, 4)) {
-            case "1100": // 計量帳票：記録開始
+        switch(data.code[0]) {
+            case Commands.Report:
+                // 計量帳票
                 {
-                    let reportId   = data.code.substring(4, 12)
+                    let output = `${data.date}|計量帳票記録`
+                    // [開始 or 終了]の追加
+                    switch(data.code[1]) {
+                        case "S": // 開始
+                            output += "開始"
+                            break
+                        case "E": // 終了
+                            output += "終了"
+                            break
+                    }
+                    // 計量帳票名の追加
+                    let reportId   = data.code[2]
                     let reportName = Data["report"][reportId] ?? reportId
-                    LogContainer.textContent += `${data.date}|帳票記録開始[${reportName}]\r\n`
+                    output += `[${reportName}]\r\n`
+
+                    // データの出力
+                    LogContainer.textContent += output
                 }
                 break
-            case "1200": // 計量帳票：記録終了
+            
+            case Commands.Operator:
                 {
-                    let reportId   = data.code.substring(4, 12)
-                    let reportName = Data["report"][reportId] ?? reportId
-                    LogContainer.textContent += `${data.date}|帳票記録終了[${reportName}]\r\n`
-                }
-                break
-            case "2100": // 作業者：作業開始
-                {
-                    let workerId   = data.code.substring(4, 12)
+                    let output = `${data.date}|作業者`
+                    // [開始 or 終了]の追加
+                    switch(data.code[1]) {
+                        case "S": // 開始
+                            output += "開始"
+                            break
+                        case "E": // 終了
+                            output += "終了"
+                            break
+                    }
+                    // 計量帳票名の追加
+                    let workerId   = data.code[2]
                     let workerName = Data["worker"][workerId] ?? workerId
-                    LogContainer.textContent += `${data.date}|作業者開始[${workerName}]\r\n`
+                    output += `[${workerName}]\r\n`
+
+                    // データの出力
+                    LogContainer.textContent += output
                 }
                 break
-            case "2200": // 作業者：作業終了
+
+            case Commands.Item: // 品目記録
                 {
-                    let workerId   = data.code.substring(4, 12)
-                    let workerName = Data["worker"][workerId] ?? workerId
-                    LogContainer.textContent += `${data.date}|作業者終了[${workerName}]\r\n`
-                }
-                break
-            case "3100": // 品目記録
-                {
-                    let itemNo   = data.code.substring(4,  8)
-                    let itemId   = data.code.substring(8, 16)
+                    let output = `${data.date}|品目計量`
+                    // 品目名の追加
+                    let itemId   = data.code[2]
                     let itemName = Data["item"][itemId] ?? itemId
-                    LogContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
+                    output += `[${itemName}]\r\n`
+
+                    // データの出力
+                    LogContainer.textContent += output
+                    // let itemNo   = data.code.substring(4,  8)
+                    // let itemId   = data.code.substring(8, 16)
+                    // let itemName = Data["item"][itemId] ?? itemId
+                    // LogContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
                 }
                 break
             default:
