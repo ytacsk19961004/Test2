@@ -78,7 +78,7 @@ function appendLog(baseText) {
             console.log(`品目以外と判定：[${JSON.stringify(data.code)}]`)
         }
 
-        console.log(data.code[0])
+        console.log(`CODE:[${data.code[0]}]`)
 
         switch(data.code[0]) {
             case Commands.Report:
@@ -158,13 +158,6 @@ window.addEventListener("load", async () => {
     LogContainer   = document.getElementById('log'         )
     DownloadButton = document.getElementById("download-btn")
     StatusText     = document.getElementById("status-text" )
-
-    const baseLog = console.log
-
-    console.log = (v) => {
-        LogContainer.textContent += v
-        baseLog(v)
-    }
 
     StatusText.textContent = "初期化中"
 
