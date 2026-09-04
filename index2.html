@@ -122,6 +122,65 @@
       color: #991b1b;
     }
 
+    /* --- 使い方表示パネル（新設） --- */
+    .usage-panel {
+      display: none; /* 初期状態は非表示 */
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #0284c7; /* アクセントカラー */
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .usage-panel.active {
+      display: block; /* アクティブ時に表示 */
+    }
+
+    .usage-panel h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .usage-panel .close-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #64748b;
+      padding: 0 4px;
+    }
+
+    .usage-panel .close-btn:hover {
+      color: #0f172a;
+    }
+
+    .usage-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #475569;
+    }
+
+    .usage-content ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    .usage-content li {
+      margin-bottom: 6px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* --- メインログ表示エリア --- */
     .content-main {
       flex: 1;
@@ -180,9 +239,50 @@
       <button id="usage-btn">使い方</button>
       <span id="status-text" class="disconnected">未接続</span>
     </div>
+
+    <!-- 使い方表示エリア（新設） -->
+    <div id="usage-panel" class="usage-panel">
+      <h2>
+        <span>操作手順・使い方</span>
+        <button type="button" class="close-btn" id="usage-close-btn" title="閉じる">✕</button>
+      </h2>
+      <div class="usage-content">
+        <p>本システムの使用手順は以下の通りです。</p>
+        <ol>
+          <li>「接続」ボタンを押して、機器との通信を開始します。</li>
+          <li>自動的に受信ログが画面下部のログエリアに順次出力されます。</li>
+          <li>ログ内容を消去したい場合は「ログクリア」ボタンを押します。</li>
+          <li>「ダウンロード」ボタンを押すと、表示中のログをテキストファイルとして保存できます。</li>
+        </ol>
+      </div>
+    </div>
+
     <div class="content-main">
       <div id="log"></div>
     </div>
   </div>
+
+  <script>
+    // 「使い方」表示トグル機能の制御
+    document.addEventListener('DOMContentLoaded', () => {
+      const usageBtn = document.getElementById('usage-btn');
+      const usagePanel = document.getElementById('usage-panel');
+      const usageCloseBtn = document.getElementById('usage-close-btn');
+
+      if (usageBtn && usagePanel) {
+        // 「使い方」ボタン押下時に表示/非表示を切り替え
+        usageBtn.addEventListener('click', () => {
+          usagePanel.classList.toggle('active');
+        });
+      }
+
+      if (usageCloseBtn && usagePanel) {
+        // パネル内の閉じる(✕)ボタン押下で非表示
+        usageCloseBtn.addEventListener('click', () => {
+          usagePanel.classList.remove('active');
+        });
+      }
+    });
+  </script>
 </body>
 </html>

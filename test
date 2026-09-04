@@ -1,21 +1,192 @@
-WREP:E:338 2026/09/04 09:03:15 OK
-WREP:S:339 2026/09/04 09:03:17 OK
-WREP:E:339 2026/09/04 09:03:20 OK
-4902475111532 2026/09/04 09:03:32 OK
-4902833740930 2026/09/04 09:03:34 OK
-4906264190302 2026/09/04 09:03:36 OK
-44262397824100 2026/09/04 09:03:37 OK
-44262447843402 2026/09/04 09:03:39 OK
-44262437837602 2026/09/04 09:03:41 OK
-44262187734909 2026/09/04 09:03:42 OK
-OPR:S:5347708 2026/09/04 09:03:51 OK
-OPR:E:5347708 2026/09/04 09:03:53 OK
-OPR:S:5345452 2026/09/04 09:03:56 OK
-OPR:E:5345452 2026/09/04 09:03:57 OK
-OPR:S:5347753 2026/09/04 09:04:01 OK
-OPR:E:5347753 2026/09/04 09:04:03 OK
-OPR:S:5347719 2026/09/04 09:04:06 OK
-OPR:E:5347719 2026/09/04 09:04:09 OK
+前回作成したHTMLに「使い方」ボタンを追加した。
+「使い方」ボタンを押下した際に内容を表示するエリアを作成。
+使い方自体の内容は現在は仮とする。
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>計量記録保存</title>
+  <script src="./js/com.js?mode=test"></script>
+  <style>
+    /* --- 基本設定 --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    }
 
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #f0f2f5;
+      color: #333333;
+    }
 
+    /* --- ヘッダー --- */
+    header {
+      background-color: #1e293b;
+      color: #ffffff;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* --- メインコンテンツエリア --- */
+    .content {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* --- 操作メニュー（ツールバー） --- */
+    .content-menu {
+      background-color: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ボタン共通スタイル */
+    .content-menu button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background-color: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content-menu button:hover {
+      background-color: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .content-menu button:active {
+      background-color: #f1f5f9;
+    }
+
+    /* 接続ボタンの強調表示 */
+    #connect-btn {
+      background-color: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+
+    #connect-btn:hover {
+      background-color: #0369a1;
+      border-color: #0369a1;
+    }
+
+    /* ステータステキスト */
+    #status-text {
+      font-size: 14px;
+      font-weight: 600;
+      margin-left: auto;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background-color: #f1f5f9;
+      color: #64748b;
+    }
+
+    /* JSでクラスが付与された場合のステータス装飾例 */
+    #status-text.connected {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+
+    #status-text.disconnected {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* --- メインログ表示エリア --- */
+    .content-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #log {
+      width: 100%;
+      height: 500px;
+      background-color: #0f172a;
+      color: #38bdf8;
+      font-family: "Consolas", "Courier New", Courier, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 600px) {
+      .content {
+        padding: 0 12px;
+        margin: 12px auto;
+      }
+
+      .content-menu {
+        gap: 8px;
+      }
+
+      .content-menu button {
+        flex: 1 1 calc(50% - 8px);
+      }
+
+      #status-text {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-title">計量記録保存</div>
+  </header>
+  <div class="content">
+    <div class="content-menu">
+      <button id="connect-btn">接続</button>
+      <button id="clear-btn">ログクリア</button>
+      <button id="download-btn">ダウンロード</button>
+      <button id="usage-btn">使い方</button>
+      <span id="status-text" class="disconnected">未接続</span>
+    </div>
+    <div class="content-main">
+      <div id="log"></div>
+    </div>
+  </div>
+</body>
+</html>
