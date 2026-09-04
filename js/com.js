@@ -9,27 +9,6 @@ let connecting     = false
 let logQueue       = ""
 var Data = {}
 
-
-// 元の console.log を保持
-const originalLog = console.log;
-
-console.log = function (...args) {
-  // 1. 本来の console.log を実行（開発者ツールにも出す場合）
-  originalLog.apply(console, args);
-
-  // 2. 指定した要素を取得して出力
-  const logContainer = document.getElementById('LogContainer');
-  if (logContainer) {
-    // 引数を文字列に変換して結合
-    const message = args
-      .map(arg => (typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)))
-      .join(' ');
-
-    // textContent に追記（改行付き）
-    logContainer.textContent += message + '\n';
-  }
-};
-
 // 計量帳票
 
 const Commands = {
@@ -98,6 +77,8 @@ function appendLog(baseText) {
         } else {
             console.log(`品目以外と判定：[${JSON.stringify(data.code)}]`)
         }
+
+        console.log(data.code[0])
 
         switch(data.code[0]) {
             case Commands.Report:
