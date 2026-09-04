@@ -97,7 +97,7 @@ function appendLog(baseText) {
                     // 計量帳票名の追加
                     let reportId   = data.code[2]
                     let reportName = Data["report"][reportId] ?? reportId
-                    output += `[${reportName}]\r\n`
+                    output += `[${reportName}](${reportId})\r\n`
 
                     // データの出力
                     LogContainer.textContent += output
@@ -119,7 +119,7 @@ function appendLog(baseText) {
                     // 計量帳票名の追加
                     let workerId   = data.code[2]
                     let workerName = Data["worker"][workerId] ?? workerId
-                    output += `[${workerName}]\r\n`
+                    output += `[${workerName}](${workerId})\r\n`
 
                     // データの出力
                     LogContainer.textContent += output
@@ -132,7 +132,7 @@ function appendLog(baseText) {
                     // 品目名の追加
                     let itemId   = data.code[1]
                     let itemName = Data["item"][itemId] ?? itemId
-                    output += `[${itemName}]\r\n`
+                    output += `[${itemName}](${itemId})\r\n`
 
                     // データの出力
                     LogContainer.textContent += output
