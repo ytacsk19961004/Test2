@@ -130,7 +130,7 @@ function appendLog(baseText) {
                 {
                     let output = `${data.date}|品目計量`
                     // 品目名の追加
-                    let itemId   = data.code[2]
+                    let itemId   = data.code[1]
                     let itemName = Data["item"][itemId] ?? itemId
                     output += `[${itemName}]\r\n`
 
