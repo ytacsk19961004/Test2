@@ -129,7 +129,7 @@ function appendLog(baseText) {
                     let output = `${data.date}|品目計量`
                     // 品目名の追加
                     let itemId   = data.code[2]
-                    let itemName = Data["ITEM"][itemId] ?? itemId
+                    let itemName = Data["item"][itemId] ?? itemId
                     output += `[${itemName}]\r\n`
 
                     // データの出力
@@ -169,6 +169,7 @@ window.addEventListener("load", async () => {
 
     Data     = (await response.json()).data
     
+    console.log(await response.json())
     console.log(Data)
 
 
