@@ -71,8 +71,11 @@ function appendLog(baseText) {
         }
         // コードの分割長を取得
         if(data.code.length == 1) {
+            console.log(`品目と判定：[${data.code}]`)
             // セパレート(:)を含まない場合は、品目と判定する
             data.code = ["ITEM", ...data.code]
+        } else {
+            console.log(`品目以外と判定：[${JSON.stringify(data.code)}]`)
         }
 
         switch(data.code[0]) {
