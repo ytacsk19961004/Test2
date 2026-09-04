@@ -167,10 +167,13 @@ window.addEventListener("load", async () => {
     
     StatusText.textContent = "未接続"
 
-    Data     = (await response.json()).data
-    
-    console.log(await response.json())
+    const responseJSON = await response.json()
+    Data     = responseJSON.data
+
+    console.log(responseJSON)
     console.log(Data)
+
+
 
 
 
