@@ -81,7 +81,7 @@ function appendLog(baseText) {
         console.log(`CODE:[${data.code[0]}]`)
 
         switch(data.code[0]) {
-            case Commands.Report:
+            case Commands.WeightReport:
                 // 計量帳票
                 {
                     let output = `${data.date}|計量帳票記録`
