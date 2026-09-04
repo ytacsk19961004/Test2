@@ -129,15 +129,11 @@ function appendLog(baseText) {
                     let output = `${data.date}|品目計量`
                     // 品目名の追加
                     let itemId   = data.code[2]
-                    let itemName = Data["item"][itemId] ?? itemId
+                    let itemName = Data["ITEM"][itemId] ?? itemId
                     output += `[${itemName}]\r\n`
 
                     // データの出力
                     LogContainer.textContent += output
-                    // let itemNo   = data.code.substring(4,  8)
-                    // let itemId   = data.code.substring(8, 16)
-                    // let itemName = Data["item"][itemId] ?? itemId
-                    // LogContainer.textContent += `${data.date}|計量品目[${itemName}]|番号[${itemNo}]|検証結果[${data.result}]\r\n`
                 }
                 break
             default:
