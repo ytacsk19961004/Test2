@@ -84,20 +84,20 @@ function appendLog(baseText) {
             case Commands.WeightReport:
                 // 計量帳票
                 {
-                    let output = `${data.date}|計量帳票記録`
+                    let output = `${data.date},計量帳票記録`
                     // [開始 or 終了]の追加
                     switch(data.code[1]) {
                         case "S": // 開始
-                            output += "開始"
+                            output += ",開始"
                             break
                         case "E": // 終了
-                            output += "終了"
+                            output += ",終了"
                             break
                     }
                     // 計量帳票名の追加
                     let reportId   = data.code[2]
                     let reportName = Data["report"][reportId] ?? reportId
-                    output += `[${reportName}](${reportId})\r\n`
+                    output += `,[${reportName}](${reportId})\r\n`
 
                     // データの出力
                     LogContainer.textContent += output
@@ -106,20 +106,20 @@ function appendLog(baseText) {
             
             case Commands.Operator:
                 {
-                    let output = `${data.date}|作業者`
+                    let output = `${data.date},作業者`
                     // [開始 or 終了]の追加
                     switch(data.code[1]) {
                         case "S": // 開始
-                            output += "開始"
+                            output += ",開始"
                             break
                         case "E": // 終了
-                            output += "終了"
+                            output += ",終了"
                             break
                     }
                     // 計量帳票名の追加
                     let workerId   = data.code[2]
                     let workerName = Data["worker"][workerId] ?? workerId
-                    output += `[${workerName}](${workerId})\r\n`
+                    output += `,[${workerName}](${workerId})\r\n`
 
                     // データの出力
                     LogContainer.textContent += output
@@ -128,11 +128,11 @@ function appendLog(baseText) {
 
             case Commands.Item: // 品目記録
                 {
-                    let output = `${data.date}|品目計量`
+                    let output = `${data.date},品目計量`
                     // 品目名の追加
                     let itemId   = data.code[1]
                     let itemName = Data["item"][itemId] ?? itemId
-                    output += `[${itemName}](${itemId})\r\n`
+                    output += `,[${itemName}](${itemId})\r\n`
 
                     // データの出力
                     LogContainer.textContent += output
