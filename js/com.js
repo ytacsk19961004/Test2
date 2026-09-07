@@ -217,7 +217,7 @@ function downloadLog() {
     const fileName = `計量記録_${date.getFullYear()}${date.getMonth()}${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}.csv`
     // ダウンロード：ファイル内容
     // const fileBlob = new Blob([logText], { type: `${"text/plain"};charset=utf-8;` }) 
-    const fileBlob = new Blob([logText], { type: `${"text/csv"};charset=utf-8;` }) 
+    const fileBlob = new Blob([logText], { type: `${"text/csv"};charset=shift_jis;` }) 
     // 一時的なダウンロード用リンクの作成
     const link = document.createElement('a')
     link.href = URL.createObjectURL(fileBlob)
