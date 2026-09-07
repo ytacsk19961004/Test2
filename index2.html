@@ -3,10 +3,10 @@
 <head>
   <meta charset="shift_js">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>計量記録保存</title>
+  <title>�v�ʋL�^�ۑ�</title>
   <script src="./js/com.js?mode=test"></script>
   <style>
-    /* --- 基本設定 --- */
+    /* --- ��{�ݒ� --- */
     * {
       margin: 0;
       padding: 0;
@@ -22,7 +22,7 @@
       color: #333333;
     }
 
-    /* --- ヘッダー --- */
+    /* --- �w�b�_�[ --- */
     header {
       background-color: #1e293b;
       color: #ffffff;
@@ -39,7 +39,7 @@
       letter-spacing: 0.05em;
     }
 
-    /* --- メインコンテンツエリア --- */
+    /* --- ���C���R���e���c�G���A --- */
     .content {
       flex: 1;
       max-width: 1000px;
@@ -51,7 +51,7 @@
       gap: 16px;
     }
 
-    /* --- 操作メニュー（ツールバー） --- */
+    /* --- ���상�j���[�i�c�[���o�[�j --- */
     .content-menu {
       background-color: #ffffff;
       padding: 16px;
@@ -63,7 +63,7 @@
       flex-wrap: wrap;
     }
 
-    /* ボタン共通スタイル */
+    /* �{�^�����ʃX�^�C�� */
     .content-menu button {
       padding: 8px 16px;
       font-size: 14px;
@@ -88,7 +88,7 @@
       background-color: #f1f5f9;
     }
 
-    /* 接続ボタンの強調表示 */
+    /* �ڑ��{�^���̋����\�� */
     #connect-btn {
       background-color: #0284c7;
       color: #ffffff;
@@ -100,7 +100,7 @@
       border-color: #0369a1;
     }
 
-    /* ステータステキスト */
+    /* �X�e�[�^�X�e�L�X�g */
     #status-text {
       font-size: 14px;
       font-weight: 600;
@@ -111,7 +111,7 @@
       color: #64748b;
     }
 
-    /* JSでクラスが付与された場合のステータス装飾例 */
+    /* JS�ŃN���X���t�^���ꂽ�ꍇ�̃X�e�[�^�X������ */
     #status-text.connected {
       background-color: #dcfce7;
       color: #166534;
@@ -122,12 +122,12 @@
       color: #991b1b;
     }
 
-    /* --- 使い方表示パネル（新設） --- */
+    /* --- �g�����\���p�l���i�V�݁j --- */
     .usage-panel {
-      display: none; /* 初期状態は非表示 */
+      display: none; /* ������Ԃ͔�\�� */
       background-color: #ffffff;
       border: 1px solid #e2e8f0;
-      border-left: 4px solid #0284c7; /* アクセントカラー */
+      border-left: 4px solid #0284c7; /* �A�N�Z���g�J���[ */
       border-radius: 8px;
       padding: 20px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -135,7 +135,7 @@
     }
 
     .usage-panel.active {
-      display: block; /* アクティブ時に表示 */
+      display: block; /* �A�N�e�B�u���ɕ\�� */
     }
 
     .usage-panel h2 {
@@ -181,7 +181,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* --- メインログ表示エリア --- */
+    /* --- ���C�����O�\���G���A --- */
     .content-main {
       flex: 1;
       display: flex;
@@ -204,7 +204,7 @@
       word-break: break-all;
     }
 
-    /* レスポンシブ対応 */
+    /* ���X�|���V�u�Ή� */
     @media (max-width: 600px) {
       .content {
         padding: 0 12px;
@@ -229,108 +229,108 @@
 </head>
 <body>
   <header>
-    <div class="header-title">計量記録保存</div>
+    <div class="header-title">�v�ʋL�^�ۑ�</div>
   </header>
   <div class="content">
     <div class="content-menu">
-      <button id="connect-btn">接続</button>
-      <button id="clear-btn">ログクリア</button>
-      <button id="download-btn">ダウンロード</button>
-      <button id="usage-btn">使い方</button>
-      <span id="status-text" class="disconnected">未接続</span>
+      <button id="connect-btn">�ڑ�</button>
+      <button id="clear-btn">���O�N���A</button>
+      <button id="download-btn">�_�E�����[�h</button>
+      <button id="usage-btn">�g����</button>
+      <span id="status-text" class="disconnected">���ڑ�</span>
     </div>
 
-    <!-- 使い方表示エリア（新設） -->
+    <!-- �g�����\���G���A�i�V�݁j -->
     <div id="usage-panel" class="usage-panel">
       <h2>
-        <span>使い方</span>
-        <button type="button" class="close-btn" id="usage-close-btn" title="閉じる">✕</button>
+        <span>�g����</span>
+        <button type="button" class="close-btn" id="usage-close-btn" title="����">?</button>
       </h2>
       <div class="usage-content">
-        <h2>【事前準備】</h2>
+        <h2>�y���O�����z</h2>
         <p>
-          本機能を使用する際には、お手元に記録に使用したMS916バーコードリーダーと、USB-Cケーブルを１本ご用意ください。<br>
+          �{�@�\���g�p����ۂɂ́A���茳�ɋL�^�Ɏg�p����MS916�o�[�R�[�h���[�_�[�ƁAUSB-C�P�[�u�����P�{���p�ӂ��������B<br>
           <img src="./img/MS916_USB-C.png">
         </p>
-        <h2>【使用手順】</h2>
-        <h3>バーコードリーダー側の準備</h3>
+        <h2>�y�g�p�菇�z</h2>
+        <h3>�o�[�R�[�h���[�_�[���̏���</h3>
         <ol>
           <li>
-            バーコードリーダーのトリガーボタン（中央の青色のボタン）を長押しして電源を入れ、スキャン画面が起動することを確認します。<br>
+            �o�[�R�[�h���[�_�[�̃g���K�[�{�^���i�����̐F�̃{�^���j�𒷉������ēd�������A�X�L������ʂ��N�����邱�Ƃ��m�F���܂��B<br>
             <img src="./img/Usage-1.png">
           </li>
           <li>
-            バーコードリーダーのアップボタン・ダウンボタン（右側の繋がった２つのボタン）を同時に押し、メインメニューに遷移します。<br>
+            �o�[�R�[�h���[�_�[�̃A�b�v�{�^���E�_�E���{�^���i�E���̌q�������Q�̃{�^���j�𓯎��ɉ����A���C�����j���[�ɑJ�ڂ��܂��B<br>
             <img src="./img/Usage-2.png">
           </li>
           <li>
-            バーコードリーダーのアップボタン・ダウンボタンを使用して「Data & Memory」を選択し、<br>トリガーボタンで決定し、「Data & Memory」メニューに遷移します。<br>
+            �o�[�R�[�h���[�_�[�̃A�b�v�{�^���E�_�E���{�^�����g�p���āuData & Memory�v��I�����A<br>�g���K�[�{�^���Ō��肵�A�uData & Memory�v���j���[�ɑJ�ڂ��܂��B<br>
             <img src="./img/Usage-3.png">
           </li>
           <li>
-            バーコードリーダーのアップボタン・ダウンボタンを使用して「Send Batch」を選択し、<br>トリガーボタンで決定し、送信モードに移行します。<br>
+            �o�[�R�[�h���[�_�[�̃A�b�v�{�^���E�_�E���{�^�����g�p���āuSend Batch�v��I�����A<br>�g���K�[�{�^���Ō��肵�A���M���[�h�Ɉڍs���܂��B<br>
             <img src="./img/Usage-4.png">
           </li>
           <li>
-            送信モードに移行し下記のような画面が表示されることを確認し、バーコードリーダーとPCをUSB-Cケーブルで接続します。<br>
-            （事前に接続しても問題ございませんが、その場合は下記の接続待ちの画面を飛ばし、送信メニューが表示されます）<br>
+            ���M���[�h�Ɉڍs�����L�̂悤�ȉ�ʂ��\������邱�Ƃ��m�F���A�o�[�R�[�h���[�_�[��PC��USB-C�P�[�u���Őڑ����܂��B<br>
+            �i���O�ɐڑ����Ă���育�����܂��񂪁A���̏ꍇ�͉��L�̐ڑ��҂��̉�ʂ��΂��A���M���j���[���\������܂��j<br>
             <img src="./img/Usage-5.png">
           </li>
           <li>
-            PCとUSB-Cケーブルで接続し、下記の送信メニューが表示されれば、バーコードリーダー側での事前準備は終了となります。<br>
-            下記の「本画面側の準備」の手順に移行してください。<br>
+            PC��USB-C�P�[�u���Őڑ����A���L�̑��M���j���[���\�������΁A�o�[�R�[�h���[�_�[���ł̎��O�����͏I���ƂȂ�܂��B<br>
+            ���L�́u�{��ʑ��̏����v�̎菇�Ɉڍs���Ă��������B<br>
             <img src="./img/Usage-6.png">
           </li>
         </ol>
 
-        <h3>本画面側の準備</h3>
+        <h3>�{��ʑ��̏���</h3>
         <ol>
           <li>
-            本画面の「接続」ボタンを押下します。<br>
+            �{��ʂ́u�ڑ��v�{�^�����������܂��B<br>
             <img src="./img/Usage-7.png">
           </li>
           <li>
-            表示された接続先の一覧から「Unitetch Virtual COM Port」を選択します。<br>
+            �\�����ꂽ�ڑ���̈ꗗ����uUnitetch Virtual COM Port�v��I�����܂��B<br>
             <img src="./img/Usage-8.png">
           </li>
           <li>
-            本画面の接続状況が「未接続」から「接続済み」に変更されたことを確認します。<br>
+            �{��ʂ̐ڑ��󋵂��u���ڑ��v����u�ڑ��ς݁v�ɕύX���ꂽ���Ƃ��m�F���܂��B<br>
             <img src="./img/Usage-9.png">
           </li>
           <li>
-            以上で画面側での事前準備は完了です。<br>
-            下記のデータ送信手順を参考に、バーコードリーダーからPC側にデータを送信してください。
+            �ȏ�ŉ�ʑ��ł̎��O�����͊����ł��B<br>
+            ���L�̃f�[�^���M�菇���Q�l�ɁA�o�[�R�[�h���[�_�[����PC���Ƀf�[�^�𑗐M���Ă��������B
           </li>
         </ol>
 
 
-        <h3>データ送信手順</h3>
+        <h3>�f�[�^���M�菇</h3>
         <ol>
           <li>
-            バーコードリーダーの「SEND BATCH」画面で「SEND」を選択した状態でトリガーボタンを押します。<br>
+            �o�[�R�[�h���[�_�[�́uSEND BATCH�v��ʂŁuSEND�v��I��������ԂŃg���K�[�{�^���������܂��B<br>
             <img src="./img/Usage-10.png">
           </li>
           <li>
-            下記の画像のように送信件数/総件数が表示されれば送信が完了です。<br>
+            ���L�̉摜�̂悤�ɑ��M����/���������\�������Α��M�������ł��B<br>
             <img src="./img/Usage-11.png">
           </li>
           <li>
-            画面側の操作履歴の一覧に、バーコードリーダーから送信された操作履歴が表示されることを確認します。<br>
+            ��ʑ��̑��엚���̈ꗗ�ɁA�o�[�R�[�h���[�_�[���瑗�M���ꂽ���엚�����\������邱�Ƃ��m�F���܂��B<br>
             <img src="./img/Usage-12.png">
           </li>
           <li>
-            必要に応じて「ダウンロード」ボタンから記録を保存してください。
+            �K�v�ɉ����āu�_�E�����[�h�v�{�^������L�^��ۑ����Ă��������B
             <img src="./img/Usage-13.png">
           </li>
           <li>
-            ダウンロード済みなどにより、バーコードリーダーに保存しているログが不要になった場合は、<br>
-            「SEND BATCH」画面で「Erase」を押下して、ログを削除してください。<br>
+            �_�E�����[�h�ς݂Ȃǂɂ��A�o�[�R�[�h���[�_�[�ɕۑ����Ă��郍�O���s�v�ɂȂ����ꍇ�́A<br>
+            �uSEND BATCH�v��ʂŁuErase�v���������āA���O���폜���Ă��������B<br>
             <img src="./img/Usage-14.png">
           </li>
           <li>
-            以上で、計量記録のデータ送信の手順は終了です。<br>
-            引き続き別の端末の操作履歴を読み取りたい場合は、一度「切断」ボタンを押して接続を切った後に、<br>
-            再度１からの手順で接続してください。
+            �ȏ�ŁA�v�ʋL�^�̃f�[�^���M�̎菇�͏I���ł��B<br>
+            ���������ʂ̒[���̑��엚����ǂݎ�肽���ꍇ�́A��x�u�ؒf�v�{�^���������Đڑ���؂�����ɁA<br>
+            �ēx�P����̎菇�Őڑ����Ă��������B
           </li>
         </ol>
       </div>
@@ -342,21 +342,21 @@
   </div>
 
   <script>
-    // 「使い方」表示トグル機能の制御
+    // �u�g�����v�\���g�O���@�\�̐���
     document.addEventListener('DOMContentLoaded', () => {
       const usageBtn = document.getElementById('usage-btn');
       const usagePanel = document.getElementById('usage-panel');
       const usageCloseBtn = document.getElementById('usage-close-btn');
 
       if (usageBtn && usagePanel) {
-        // 「使い方」ボタン押下時に表示/非表示を切り替え
+        // �u�g�����v�{�^���������ɕ\��/��\����؂�ւ�
         usageBtn.addEventListener('click', () => {
           usagePanel.classList.toggle('active');
         });
       }
 
       if (usageCloseBtn && usagePanel) {
-        // パネル内の閉じる(✕)ボタン押下で非表示
+        // �p�l�����̕���(?)�{�^�������Ŕ�\��
         usageCloseBtn.addEventListener('click', () => {
           usagePanel.classList.remove('active');
         });
