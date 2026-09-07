@@ -201,34 +201,41 @@ function clearLog(){
 
 
 function downloadLog() {
-    // ダウンロード対象のテキストを取得
-    const logText  = LogContainer.textContent
-    // ダウンロード：ファイル名
-    const date = new Date()
+    // 1. ダウンロード対象のテキストを取得
+    const logText = LogContainer.textContent;
 
-    
-    
-    
-    
-    
-    
-    
+    // 2. 文字列を Unicode の文字コード配列に変換
+    const unicodeArray = Encoding.stringToCode(logText);
 
-    const fileName = `計量記録_${date.getFullYear()}${date.getMonth()}${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}.csv`
-    // ダウンロード：ファイル内容
-    // const fileBlob = new Blob([logText], { type: `${"text/plain"};charset=utf-8;` }) 
-    const fileBlob = new Blob([logText], { type: `${"text/csv"};charset=shift_jis;` }) 
-    // 一時的なダウンロード用リンクの作成
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(fileBlob)
-    link.download = fileName
+    // 3. Unicode から Shift_JIS のバイト配列に変換
+    const sjisArray = Encoding.convert(unicodeArray, {
+        to: 'SJIS',
+        from: 'UNICODE'
+    });
 
-    // リンクをDOMに追加してクリックを発火後、削除
+    // 4. Uint8Array に変換して Blob に渡す
+    const uint8Array = new Uint8Array(sjisArray);
+    const fileBlob = new Blob([uint8Array], { type: 'text/csv;charset=shift_jis;' });
+
+    // 5. ダウンロード用のファイル名作成（※getMonth()は0始まりのため+1が必要）
+    const date = new Date();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const fileName = `計量記録_${date.getFullYear()}${month}${day}${hours}${minutes}${seconds}.csv`;
+
+    // 6. リンク作成と発火
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(fileBlob);
+    link.download = fileName;
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    // メモリ解放
+    // 7. メモリ解放
     URL.revokeObjectURL(link.href);
 }
 
