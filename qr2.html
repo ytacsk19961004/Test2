@@ -154,7 +154,7 @@
       gap: 16px;
     }
 
-    /* 入力エリア */
+    /* 選択エリア */
     .input-section {
       width: 100%;
       background-color: #ffffff;
@@ -163,7 +163,7 @@
       padding: 20px;
     }
 
-    #input-text {
+    #select-text {
       width: 100%;
       height: 42px;
       background-color: #ffffff;
@@ -173,9 +173,10 @@
       padding: 0 12px;
       border-radius: 6px;
       outline: none;
+      cursor: pointer;
     }
 
-    #input-text:focus {
+    #select-text:focus {
       border-color: #0284c7;
     }
 
@@ -238,8 +239,8 @@
       <div class="usage-content">
         <h3>【作成手順】</h3>
         <ol>
-          <li>入力欄に文字列を入力します。</li>
-          <li>「QR生成」を押すか入力を行うと、下にQRコードが生成されます。</li>
+          <li>プルダウンメニューから変換したい項目を選択します。</li>
+          <li>「QR生成」を押すか選択変更を行うと、下にQRコードが生成されます。</li>
           <li>「ダウンロード」ボタンで画像として保存できます。</li>
         </ol>
       </div>
@@ -248,7 +249,12 @@
     <!-- メインコンテンツ -->
     <div class="content-main">
       <div class="input-section">
-        <input type="text" id="input-text" placeholder="ここにQRコード化したいテキストを入力してください..." />
+        <select id="select-text">
+          <option value="">-- 選択してください --</option>
+          <option value="項目Aのテキスト">項目A</option>
+          <option value="項目Bのテキスト">項目B</option>
+          <option value="https://example.com">サンプルURL</option>
+        </select>
       </div>
       <div class="qr-section">
         <div id="qrcode" class="qr-container">
@@ -260,7 +266,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputText = document.getElementById('input-text');
+      const selectText = document.getElementById('select-text');
       const generateBtn = document.getElementById('generate-btn');
       const downloadBtn = document.getElementById('download-btn');
       const usageBtn = document.getElementById('usage-btn');
@@ -269,7 +275,7 @@
       const qrContainer = document.getElementById('qrcode');
 
       function makeCode() {
-        const text = inputText.value.trim();
+        const text = selectText.value.trim();
         qrContainer.innerHTML = ''; // 初期化
 
         if (text === '') {
@@ -301,7 +307,7 @@
 
       // イベントリスナー設定
       generateBtn.addEventListener('click', makeCode);
-      inputText.addEventListener('input', makeCode);
+      selectText.addEventListener('change', makeCode);
 
       // ダウンロード機能
       downloadBtn.addEventListener('click', () => {
