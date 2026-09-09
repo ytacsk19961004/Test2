@@ -166,6 +166,7 @@
       flex: 1;
       display: flex;
       gap: 16px;
+      align-items: flex-start;
     }
 
     /* 入力エリア */
@@ -173,21 +174,23 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      padding: 20px;
     }
 
     #input-text {
       width: 100%;
-      height: 400px;
+      height: 42px;
       background-color: #ffffff;
       color: #0f172a;
       border: 1px solid #cbd5e1;
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
       font-family: inherit;
       font-size: 14px;
-      line-height: 1.6;
-      padding: 16px;
-      border-radius: 8px;
-      resize: vertical;
+      padding: 0 12px;
+      border-radius: 6px;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -255,8 +258,6 @@
       .content-menu button {
         flex: 1 1 calc(50% - 8px);
       }
-
-
     }
   </style>
 </head>
@@ -269,7 +270,6 @@
     <!-- 操作メニュー -->
     <div class="content-menu">
       <button id="generate-btn">QR生成</button>
-      <button id="clear-btn">クリア</button>
       <button id="download-btn">ダウンロード</button>
       <button id="usage-btn">使い方</button>
     </div>
@@ -283,10 +283,9 @@
       <div class="usage-content">
         <h3>【作成手順】</h3>
         <ol>
-          <li>テキストエリアにQRコード化したい文字列（URLやテキスト）を入力します。</li>
+          <li>入力欄にQRコード化したい文字列を入力します。</li>
           <li>「QR生成」ボタンを押すか、文字を入力すると右側に自動的にQRコードが生成されます。</li>
           <li>生成されたQRコードは「ダウンロード」ボタンを押すことで、画像ファイル（PNG形式）として保存できます。</li>
-          <li>入力内容をやり直したい場合は「クリア」ボタンを押してください。</li>
         </ol>
       </div>
     </div>
@@ -294,7 +293,7 @@
     <!-- メインコンテンツ（入力 ＆ QR表示） -->
     <div class="content-main">
       <div class="input-section">
-        <textarea id="input-text" placeholder="ここにQRコード化したいテキストまたはURLを入力してください..."></textarea>
+        <input type="text" id="input-text" placeholder="ここにQRコード化したいテキストまたはURLを入力してください..." />
       </div>
       <div class="qr-section">
         <div id="qrcode" class="qr-container">
@@ -308,7 +307,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       const inputText = document.getElementById('input-text');
       const generateBtn = document.getElementById('generate-btn');
-      const clearBtn = document.getElementById('clear-btn');
       const downloadBtn = document.getElementById('download-btn');
       const usageBtn = document.getElementById('usage-btn');
       const usageCloseBtn = document.getElementById('usage-close-btn');
@@ -328,21 +326,19 @@
           return;
         }
 
-        const form_id   = "15151"
-        const item_name = text
+        const form_id   = "15151";
+        const item_name = text;
 
         const data = {
           form_id : form_id,
           answers : [
             { item_name : item_name }
           ]
-        }
+        };
 
-
-
-        // QRコード生成
+        // QRコード生成 (JSONデータ文字列を変換)
         qrcodeObj = new QRCode(qrContainer, {
-          text: text,
+          text: JSON.stringify(data),
           width: 200,
           height: 200,
           colorDark: "#000000",
@@ -355,14 +351,8 @@
       // イベントリスナー設定
       generateBtn.addEventListener('click', makeCode);
       
-      // 入力時にリアルタイム変換（不要な場合はコメントアウト）
+      // 入力時にリアルタイム変換
       inputText.addEventListener('input', makeCode);
-
-      // クリアボタン
-      clearBtn.addEventListener('click', () => {
-        inputText.value = '';
-        makeCode();
-      });
 
       // ダウンロードボタン
       downloadBtn.addEventListener('click', () => {
