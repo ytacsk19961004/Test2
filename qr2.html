@@ -327,6 +327,8 @@
           ]
         };
 
+        console.log(JSON.stringify(data))
+
         // QRコード生成
         qrcodeObj = new QRCode(qrContainer, {
           text: JSON.stringify(data),
