@@ -238,9 +238,9 @@
     <!-- 操作メニュー -->
     <div class="content-menu">
       <select id="generate-select">
-        <option value="15151" default>トラックインスチーマー稼働記録</option>
-        <option value="15154">真空冷却器 冷却記録</option>
-        <option value="15343">差圧保管庫 冷却記録</option>
+        <option value="15151">QR生成 (標準)</option>
+        <option value="option1">任意テキスト1</option>
+        <option value="option2">任意テキスト2</option>
       </select>
       <button id="download-btn">ダウンロード</button>
       <button id="usage-btn">使い方</button>
@@ -285,24 +285,13 @@
       const usagePanel = document.getElementById('usage-panel');
       const qrContainer = document.getElementById('qrcode');
 
+      // UTF-8エンコーディング用の補助関数
+      function toUtf8ByteArray(str) {
+        return unescape(encodeURIComponent(str));
+      }
+
       function makeCode() {
         const selectedValue = generateSelect.value;
-
-        // generateSelectの値に応じた分岐 (処理は空)
-        switch (selectedValue) {
-          case 'default':
-            // 処理
-            break;
-          case 'option1':
-            // 処理
-            break;
-          case 'option2':
-            // 処理
-            break;
-          default:
-            // 処理
-            break;
-        }
 
         const text = inputText.value.trim();
         qrContainer.innerHTML = ''; // 初期化
@@ -317,14 +306,15 @@
           answers : [{ 製品名称 : text }]
         };
 
-        console.log(JSON.stringify(data))
-
         try {
           const typeNumber = 0; // 自動計算
-          const errorCorrectionLevel = 'H';
+          const errorCorrectionLevel = 'L';
           const qr = qrcode(typeNumber, errorCorrectionLevel);
 
-          qr.addData(JSON.stringify(data));
+          // JSON文字列化したオブジェクトをUTF-8バイト配列に変換して追加
+          const jsonString = JSON.stringify(data);
+          qr.addData(toUtf8ByteArray(jsonString));
+          
           qr.make();
 
           qrContainer.innerHTML = qr.createImgTag(5, 10);
