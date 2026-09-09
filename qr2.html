@@ -165,13 +165,13 @@
     .content-main {
       flex: 1;
       display: flex;
+      flex-direction: column; /* 上下配置に変更 */
       gap: 16px;
-      align-items: flex-start;
     }
 
     /* 入力エリア */
     .input-section {
-      flex: 1;
+      width: 100%;
       display: flex;
       flex-direction: column;
       background-color: #ffffff;
@@ -199,13 +199,13 @@
       border-color: #0284c7;
     }
 
-    /* QRコード表示エリア */
+    /* QRコード表示エリア（入力領域の下に配置） */
     .qr-section {
-      width: 320px;
+      width: 100%;
       background-color: #ffffff;
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      padding: 20px;
+      padding: 32px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -237,15 +237,6 @@
 
     /* レスポンシブ対応 */
     @media (max-width: 768px) {
-      .content-main {
-        flex-direction: column;
-      }
-
-      .qr-section {
-        width: 100%;
-        padding: 32px 20px;
-      }
-
       .content {
         padding: 0 12px;
         margin: 12px auto;
@@ -284,7 +275,7 @@
         <h3>【作成手順】</h3>
         <ol>
           <li>入力欄にQRコード化したい文字列を入力します。</li>
-          <li>「QR生成」ボタンを押すか、文字を入力すると右側に自動的にQRコードが生成されます。</li>
+          <li>「QR生成」ボタンを押すか、文字を入力すると下に自動的にQRコードが生成されます。</li>
           <li>生成されたQRコードは「ダウンロード」ボタンを押すことで、画像ファイル（PNG形式）として保存できます。</li>
         </ol>
       </div>
@@ -336,7 +327,7 @@
           ]
         };
 
-        // QRコード生成 (JSONデータ文字列を変換)
+        // QRコード生成
         qrcodeObj = new QRCode(qrContainer, {
           text: JSON.stringify(data),
           width: 200,
