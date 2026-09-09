@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRコード生成ツール</title>
+  <!-- QRコード生成ライブラリ（qrcodejs） -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    /* --- 基本設定 --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #f0f2f5;
+      color: #333333;
+    }
+
+    /* --- ヘッダー --- */
+    header {
+      background-color: #1e293b;
+      color: #ffffff;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* --- メインコンテンツエリア --- */
+    .content {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* --- 操作メニュー（ツールバー） --- */
+    .content-menu {
+      background-color: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ボタン共通スタイル */
+    .content-menu button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background-color: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content-menu button:hover {
+      background-color: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .content-menu button:active {
+      background-color: #f1f5f9;
+    }
+
+    /* 生成ボタンの強調表示 */
+    #generate-btn {
+      background-color: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+
+    #generate-btn:hover {
+      background-color: #0369a1;
+      border-color: #0369a1;
+    }
+
+
+    /* --- 使い方表示パネル --- */
+    .usage-panel {
+      display: none;
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #0284c7;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .usage-panel.active {
+      display: block;
+    }
+
+    .usage-panel h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .usage-panel .close-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #64748b;
+      padding: 0 4px;
+    }
+
+    .usage-panel .close-btn:hover {
+      color: #0f172a;
+    }
+
+    .usage-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #475569;
+    }
+
+    .usage-content ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    .usage-content li {
+      margin-bottom: 6px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- メイン表示エリア --- */
+    .content-main {
+      flex: 1;
+      display: flex;
+      gap: 16px;
+    }
+
+    /* 入力エリア */
+    .input-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #input-text {
+      width: 100%;
+      height: 400px;
+      background-color: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 16px;
+      border-radius: 8px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #input-text:focus {
+      border-color: #0284c7;
+    }
+
+    /* QRコード表示エリア */
+    .qr-section {
+      width: 320px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .qr-container {
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .qr-container img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .qr-placeholder {
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+      .content-main {
+        flex-direction: column;
+      }
+
+      .qr-section {
+        width: 100%;
+        padding: 32px 20px;
+      }
+
+      .content {
+        padding: 0 12px;
+        margin: 12px auto;
+      }
+
+      .content-menu {
+        gap: 8px;
+      }
+
+      .content-menu button {
+        flex: 1 1 calc(50% - 8px);
+      }
+
+
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-title">QRコード生成</div>
+  </header>
+
+  <div class="content">
+    <!-- 操作メニュー -->
+    <div class="content-menu">
+      <button id="generate-btn">QR生成</button>
+      <button id="clear-btn">クリア</button>
+      <button id="download-btn">ダウンロード</button>
+      <button id="usage-btn">使い方</button>
+    </div>
+
+    <!-- 使い方表示エリア -->
+    <div id="usage-panel" class="usage-panel">
+      <h2>
+        <span>使い方</span>
+        <button type="button" class="close-btn" id="usage-close-btn" title="閉じる">✕</button>
+      </h2>
+      <div class="usage-content">
+        <h3>【作成手順】</h3>
+        <ol>
+          <li>テキストエリアにQRコード化したい文字列（URLやテキスト）を入力します。</li>
+          <li>「QR生成」ボタンを押すか、文字を入力すると右側に自動的にQRコードが生成されます。</li>
+          <li>生成されたQRコードは「ダウンロード」ボタンを押すことで、画像ファイル（PNG形式）として保存できます。</li>
+          <li>入力内容をやり直したい場合は「クリア」ボタンを押してください。</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- メインコンテンツ（入力 ＆ QR表示） -->
+    <div class="content-main">
+      <div class="input-section">
+        <textarea id="input-text" placeholder="ここにQRコード化したいテキストまたはURLを入力してください..."></textarea>
+      </div>
+      <div class="qr-section">
+        <div id="qrcode" class="qr-container">
+          <span class="qr-placeholder">ここにQRコードが<br>表示されます</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputText = document.getElementById('input-text');
+      const generateBtn = document.getElementById('generate-btn');
+      const clearBtn = document.getElementById('clear-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const usageBtn = document.getElementById('usage-btn');
+      const usageCloseBtn = document.getElementById('usage-close-btn');
+      const usagePanel = document.getElementById('usage-panel');
+      const qrContainer = document.getElementById('qrcode');
+
+      let qrcodeObj = null;
+
+      // QRコードの生成処理
+      function makeCode() {
+        const text = inputText.value.trim();
+        qrContainer.innerHTML = ''; // 初期化
+
+        if (text === '') {
+          qrContainer.innerHTML = '<span class="qr-placeholder">ここにQRコードが<br>表示されます</span>';
+          qrcodeObj = null;
+          return;
+        }
+
+        const form_id   = "15151"
+        const item_name = text
+
+        const data = {
+          form_id : form_id,
+          answers : [
+            { item_name : item_name }
+          ]
+        }
+
+
+
+        // QRコード生成
+        qrcodeObj = new QRCode(qrContainer, {
+          text: text,
+          width: 200,
+          height: 200,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+      }
+
+      // イベントリスナー設定
+      generateBtn.addEventListener('click', makeCode);
+      
+      // 入力時にリアルタイム変換（不要な場合はコメントアウト）
+      inputText.addEventListener('input', makeCode);
+
+      // クリアボタン
+      clearBtn.addEventListener('click', () => {
+        inputText.value = '';
+        makeCode();
+      });
+
+      // ダウンロードボタン
+      downloadBtn.addEventListener('click', () => {
+        const img = qrContainer.querySelector('img');
+        if (!img || !img.src) {
+          alert('ダウンロードするQRコードが生成されていません。');
+          return;
+        }
+        const link = document.createElement('a');
+        link.href = img.src;
+        link.download = 'qrcode.png';
+        link.click();
+      });
+
+      // 使い方パネルの開閉処理
+      if (usageBtn && usagePanel) {
+        usageBtn.addEventListener('click', () => {
+          usagePanel.classList.toggle('active');
+        });
+      }
+
+      if (usageCloseBtn && usagePanel) {
+        usageCloseBtn.addEventListener('click', () => {
+          usagePanel.classList.remove('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
