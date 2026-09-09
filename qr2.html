@@ -193,8 +193,8 @@
     }
 
     .qr-container {
-      width: 220px;
-      height: 220px;
+      width: 200px;
+      height: 200px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -203,9 +203,10 @@
       border-radius: 8px;
     }
 
-    .qr-container canvas {
-      max-width: 100%;
-      max-height: 100%;
+    .qr-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .qr-placeholder {
@@ -238,7 +239,7 @@
         <h3>【作成手順】</h3>
         <ol>
           <li>入力欄に文字列を入力します。</li>
-          <li>「QR生成」を押すか入力を行うと、中央に文字が埋め込まれたQRコードが生成されます。</li>
+          <li>「QR生成」を押すか入力を行うと、下にQRコードが生成されます。</li>
           <li>「ダウンロード」ボタンで画像として保存できます。</li>
         </ol>
       </div>
@@ -282,75 +283,19 @@
         };
 
         try {
-          // 中央を覆うため、誤り訂正レベルを "M" (15%補正) に指定して読み取り能力を維持します
-          const typeNumber = 0; // 自動判定
-          const errorCorrectionLevel = 'M';
+          const typeNumber = 0; // 自動で型番を計算
+          const errorCorrectionLevel = 'L'; // 誤り訂正レベル: L
           const qr = qrcode(typeNumber, errorCorrectionLevel);
 
           qr.addData(JSON.stringify(data));
           qr.make();
 
-          // Canvas描画設定
-          const moduleCount = qr.getModuleCount();
-          const cellSize = 6;
-          const margin = 12;
-          const canvasSize = moduleCount * cellSize + margin * 2;
-
-          const canvas = document.createElement('canvas');
-          canvas.width = canvasSize;
-          canvas.height = canvasSize;
-          const ctx = canvas.getContext('2d');
-
-          // 背景（白）
-          ctx.fillStyle = '#FFFFFF';
-          ctx.fillRect(0, 0, canvasSize, canvasSize);
-
-          // QRコードの黒マスを描画
-          ctx.fillStyle = '#000000';
-          for (let row = 0; row < moduleCount; row++) {
-            for (let col = 0; col < moduleCount; col++) {
-              if (qr.isDark(row, col)) {
-                ctx.fillRect(
-                  margin + col * cellSize,
-                  margin + row * cellSize,
-                  cellSize,
-                  cellSize
-                );
-              }
-            }
-          }
-
-          // --- 中央へのテキスト描画処理 ---
-          // 入力文字列から先頭4文字（読み取りの邪魔にならない程度）を抽出
-          const centerText = text.substring(0, 4);
-
-          if (centerText !== '') {
-            const centerX = canvasSize / 2;
-            const centerY = canvasSize / 2;
-            const badgeRadius = cellSize * 2.8;
-
-            // 中央の白い背景（丸型）を描画して既存のQRパターンを部分的に消す
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, badgeRadius, 0, Math.PI * 2);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fill();
-            ctx.strokeStyle = '#0284c7'; // デザインに合わせた青色枠線
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // 入力テキスト（先頭部分）を中央に描写
-            ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(centerText, centerX, centerY);
-          }
-
-          qrContainer.appendChild(canvas);
+          // IMGタグとして要素を出力
+          qrContainer.innerHTML = qr.createImgTag(5, 10);
 
         } catch (e) {
           console.error(e);
-          qrContainer.innerHTML = '<span class="qr-placeholder" style="color:#ef4444;">エラーが発生しました</span>';
+          qrContainer.innerHTML = '<span class="qr-placeholder" style="color:#ef4444;">データ長が長すぎるため<br>生成できません</span>';
         }
       }
 
@@ -360,13 +305,13 @@
 
       // ダウンロード機能
       downloadBtn.addEventListener('click', () => {
-        const canvas = qrContainer.querySelector('canvas');
-        if (!canvas) {
+        const img = qrContainer.querySelector('img');
+        if (!img || !img.src) {
           alert('ダウンロードするQRコードが生成されていません。');
           return;
         }
         const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
+        link.href = img.src;
         link.download = 'qrcode.png';
         link.click();
       });
