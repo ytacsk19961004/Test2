@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スプレッドシート テスト画面</title>
+
+    <!-- Luckysheet CDN Dependencies -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/css/pluginsCss.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/plugins.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
+
+    <style>
+        /* 画面全体のレイアウト定義 */
+        * {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ヘッダーエリア */
+        header {
+            background-color: #2b579a;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .btn-save {
+            background-color: #107c41;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-save:hover {
+            background-color: #0b5a2f;
+        }
+
+        /* スプレッドシート表示エリア */
+        #luckysheet {
+            width: 100%;
+            height: calc(100vh - 50px);
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header>
+        <h1>Web スプレッドシート テスト</h1>
+        <button class="btn-save" onclick="saveData()">データを保存(コンソール出力)</button>
+    </header>
+
+    <!-- スプレッドシート埋め込みコンテナ -->
+    <div id="luckysheet"></div>
+
+    <script>
+        // ページ読み込み時にスプレッドシートを初期化
+        window.onload = function () {
+            // 初期表示用データの定義
+            const initialData = [
+                {
+                    name: "売上データ", // シート名
+                    color: "",
+                    index: "0",
+                    status: 1, // アクティブ状態
+                    order: "0",
+                    data: [
+                        [
+                            { v: "商品名", ct: { fa: "General", t: "g" }, bg: "#f3f3f3", bl: 1 },
+                            { v: "単価", ct: { fa: "General", t: "g" }, bg: "#f3f3f3", bl: 1 },
+                            { v: "数量", ct: { fa: "General", t: "g" }, bg: "#f3f3f3", bl: 1 },
+                            { v: "小計", ct: { fa: "General", t: "g" }, bg: "#f3f3f3", bl: 1 }
+                        ],
+                        [
+                            { v: "リンゴ" },
+                            { v: 150 },
+                            { v: 5 },
+                            { f: "=B2*C2" } // 関数による自動計算
+                        ],
+                        [
+                            { v: "バナナ" },
+                            { v: 100 },
+                            { v: 12 },
+                            { f: "=B3*C3" }
+                        ],
+                        [
+                            { v: "合計", bl: 1 },
+                            { v: "" },
+                            { v: "" },
+                            { f: "=SUM(D2:D3)", bl: 1, fc: "#d9534f" } // SUM関数＋赤文字＋太字
+                        ]
+                    ]
+                }
+            ];
+
+            // Luckysheetの起動オプション設定
+            luckysheet.create({
+                container: 'luckysheet', // 表示するDIV要素のID
+                lang: 'zh',              // 言語設定 (日本語(ja)未完全対応のため英語・標準アイコン利用)
+                showinfobar: false,      // 上部のタイトルバーを非表示
+                data: initialData
+            });
+        };
+
+        // 「データを保存」ボタンを押したときのJavaScript関数
+        function saveData() {
+            // 現在の全シートデータを取得
+            const allSheets = luckysheet.getAllSheets();
+            
+            console.log("--- 現在のスプレッドシートデータ ---");
+            console.log(allSheets);
+            
+            alert("データをコンソール（F12 > Console）に出力しました。");
+        }
+    </script>
+</body>
+</html>

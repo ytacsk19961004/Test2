@@ -152,6 +152,16 @@ function appendLog(baseText) {
 const DATA_API_URL = "https://script.google.com/macros/s/AKfycbxWOgQ1dHJhtNi74e23TH2LV-YHdJsxJB02g8so8cYX3hPaY--oQvEnGbUG0L7hcP0o-w/exec"
 
 
+// データを最初に読み込むには？
+// 初期化用処理
+
+
+// 
+
+
+
+
+
 window.addEventListener("load", async () => {
     ConnectButton  = document.getElementById('connect-btn' )
     ClearButton    = document.getElementById('clear-btn'   )
@@ -281,3 +291,29 @@ async function connectCOM() {
         console.log(e)
     }
 }
+
+
+
+
+三浦工業株式会社
+大塚様
+ 
+いつも大変お世話になっております。
+ 
+イトーヨーカドー セントラルキッチン日高
+鈴木です。
+
+納期についてのご連絡いただきありがとうございます。
+9/14の納入とのこと承知いたしました。
+
+以上です。よろしくお願いいたします。
+ 
+-------------------------------------------
+会社名　：株式会社　イトーヨーカドー
+部署名　：セントラルキッチン日高　品質保証室
+名前　　：鈴木　悠太
+住所　　：〒350-1222
+　　　　　埼玉県日高市大谷沢６８２
+電話　　：042-984-2112
+E-Mail　：suzuki-yuuta@iy.7andi.co.jp
+-------------------------------------------
