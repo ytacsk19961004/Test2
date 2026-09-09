@@ -9,6 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   
   <style>
+    /* --- 基本設定 --- */
     * {
       margin: 0;
       padding: 0;
@@ -24,6 +25,7 @@
       color: #333333;
     }
 
+    /* --- ヘッダー --- */
     header {
       background-color: #1e293b;
       color: #ffffff;
@@ -40,6 +42,7 @@
       letter-spacing: 0.05em;
     }
 
+    /* --- メインコンテンツエリア --- */
     .content {
       flex: 1;
       max-width: 1000px;
@@ -51,6 +54,7 @@
       gap: 16px;
     }
 
+    /* --- 操作メニュー（ツールバー） --- */
     .content-menu {
       background-color: #ffffff;
       padding: 16px;
@@ -72,6 +76,9 @@
       color: #334155;
       cursor: pointer;
       transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .content-menu button:hover {
@@ -89,6 +96,57 @@
       background-color: #0369a1;
     }
 
+    /* --- 使い方表示パネル --- */
+    .usage-panel {
+      display: none;
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #0284c7;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .usage-panel.active {
+      display: block;
+    }
+
+    .usage-panel h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .usage-panel .close-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #64748b;
+    }
+
+    .usage-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #475569;
+    }
+
+    .usage-content ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- メイン表示エリア --- */
     .content-main {
       flex: 1;
       display: flex;
@@ -103,24 +161,9 @@
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
     }
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .input-group label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #475569;
-    }
-
-    .input-group input {
+    #input-text {
       width: 100%;
       height: 42px;
       background-color: #ffffff;
@@ -132,7 +175,7 @@
       outline: none;
     }
 
-    .input-group input:focus {
+    #input-text:focus {
       border-color: #0284c7;
     }
 
@@ -178,23 +221,34 @@
   </header>
 
   <div class="content">
+    <!-- 操作メニュー -->
     <div class="content-menu">
       <button id="generate-btn">QR生成</button>
       <button id="download-btn">ダウンロード</button>
+      <button id="usage-btn">使い方</button>
     </div>
 
+    <!-- 使い方表示エリア -->
+    <div id="usage-panel" class="usage-panel">
+      <h2>
+        <span>使い方</span>
+        <button type="button" class="close-btn" id="usage-close-btn" title="閉じる">✕</button>
+      </h2>
+      <div class="usage-content">
+        <h3>【作成手順】</h3>
+        <ol>
+          <li>入力欄に文字列を入力します。</li>
+          <li>「QR生成」を押すか入力を行うと、中央に文字が埋め込まれたQRコードが生成されます。</li>
+          <li>「ダウンロード」ボタンで画像として保存できます。</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- メインコンテンツ -->
     <div class="content-main">
       <div class="input-section">
-        <div class="input-group">
-          <label for="input-text">QRデータ用テキスト</label>
-          <input type="text" id="input-text" placeholder="ここにQRコード化したいテキストを入力..." />
-        </div>
-        <div class="input-group">
-          <label for="center-text">中央に表示する文字 (オプション・4文字程度まで推奨)</label>
-          <input type="text" id="center-text" placeholder="例: OK, SALE, LOGO など" maxlength="6" />
-        </div>
+        <input type="text" id="input-text" placeholder="ここにQRコード化したいテキストを入力してください..." />
       </div>
-
       <div class="qr-section">
         <div id="qrcode" class="qr-container">
           <span class="qr-placeholder">ここにQRコードが<br>表示されます</span>
@@ -206,14 +260,15 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const inputText = document.getElementById('input-text');
-      const centerTextInput = document.getElementById('center-text');
       const generateBtn = document.getElementById('generate-btn');
       const downloadBtn = document.getElementById('download-btn');
+      const usageBtn = document.getElementById('usage-btn');
+      const usageCloseBtn = document.getElementById('usage-close-btn');
+      const usagePanel = document.getElementById('usage-panel');
       const qrContainer = document.getElementById('qrcode');
 
       function makeCode() {
         const text = inputText.value.trim();
-        const centerText = centerTextInput.value.trim();
         qrContainer.innerHTML = ''; // 初期化
 
         if (text === '') {
@@ -227,15 +282,15 @@
         };
 
         try {
-          // 中央に文字を置くため、誤り訂正レベルを "M" または "H" に変更して復元能力を向上させます
+          // 中央を覆うため、誤り訂正レベルを "M" (15%補正) に指定して読み取り能力を維持します
           const typeNumber = 0; // 自動判定
-          const errorCorrectionLevel = centerText ? 'M' : 'L';
+          const errorCorrectionLevel = 'M';
           const qr = qrcode(typeNumber, errorCorrectionLevel);
 
           qr.addData(JSON.stringify(data));
           qr.make();
 
-          // Canvas要素を作成してQRコードを描画
+          // Canvas描画設定
           const moduleCount = qr.getModuleCount();
           const cellSize = 6;
           const margin = 12;
@@ -250,7 +305,7 @@
           ctx.fillStyle = '#FFFFFF';
           ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-          // QRコードセルを描画
+          // QRコードの黒マスを描画
           ctx.fillStyle = '#000000';
           for (let row = 0; row < moduleCount; row++) {
             for (let col = 0; col < moduleCount; col++) {
@@ -265,24 +320,27 @@
             }
           }
 
-          // 中央に文字を追加描画
+          // --- 中央へのテキスト描画処理 ---
+          // 入力文字列から先頭4文字（読み取りの邪魔にならない程度）を抽出
+          const centerText = text.substring(0, 4);
+
           if (centerText !== '') {
             const centerX = canvasSize / 2;
             const centerY = canvasSize / 2;
-            const badgeRadius = cellSize * 2.5;
+            const badgeRadius = cellSize * 2.8;
 
-            // 中央の白い丸背景（QRコードの一部を打ち消す）
+            // 中央の白い背景（丸型）を描画して既存のQRパターンを部分的に消す
             ctx.beginPath();
             ctx.arc(centerX, centerY, badgeRadius, 0, Math.PI * 2);
             ctx.fillStyle = '#FFFFFF';
             ctx.fill();
-            ctx.strokeStyle = '#000000';
+            ctx.strokeStyle = '#0284c7'; // デザインに合わせた青色枠線
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // テキストの描画
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 12px sans-serif';
+            // 入力テキスト（先頭部分）を中央に描写
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 11px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(centerText, centerX, centerY);
@@ -299,7 +357,6 @@
       // イベントリスナー設定
       generateBtn.addEventListener('click', makeCode);
       inputText.addEventListener('input', makeCode);
-      centerTextInput.addEventListener('input', makeCode);
 
       // ダウンロード機能
       downloadBtn.addEventListener('click', () => {
@@ -313,6 +370,14 @@
         link.download = 'qrcode.png';
         link.click();
       });
+
+      // 使い方パネル処理
+      if (usageBtn && usagePanel) {
+        usageBtn.addEventListener('click', () => usagePanel.classList.toggle('active'));
+      }
+      if (usageCloseBtn && usagePanel) {
+        usageCloseBtn.addEventListener('click', () => usagePanel.classList.remove('active'));
+      }
     });
   </script>
 </body>
