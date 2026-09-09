@@ -66,7 +66,6 @@
       flex-wrap: wrap;
     }
 
-    /* メニュー内のSelect要素スタイル */
     .content-menu select {
       padding: 8px 12px;
       font-size: 14px;
@@ -91,7 +90,6 @@
       color: #334155;
     }
 
-    /* ボタン共通スタイル */
     .content-menu button {
       padding: 8px 16px;
       font-size: 14px;
@@ -171,7 +169,6 @@
       gap: 16px;
     }
 
-    /* 入力エリア */
     .input-section {
       width: 100%;
       background-color: #ffffff;
@@ -196,7 +193,6 @@
       border-color: #0284c7;
     }
 
-    /* QRコード表示エリア */
     .qr-section {
       width: 100%;
       background-color: #ffffff;
@@ -241,7 +237,6 @@
   <div class="content">
     <!-- 操作メニュー -->
     <div class="content-menu">
-      <!-- 「QR生成」ボタンをSelect要素に置き換え -->
       <select id="generate-select">
         <option value="default">QR生成 (標準)</option>
         <option value="option1">任意テキスト1</option>
@@ -291,6 +286,24 @@
       const qrContainer = document.getElementById('qrcode');
 
       function makeCode() {
+        const selectedValue = generateSelect.value;
+
+        // generateSelectの値に応じた分岐 (処理は空)
+        switch (selectedValue) {
+          case 'default':
+            // 処理
+            break;
+          case 'option1':
+            // 処理
+            break;
+          case 'option2':
+            // 処理
+            break;
+          default:
+            // 処理
+            break;
+        }
+
         const text = inputText.value.trim();
         qrContainer.innerHTML = ''; // 初期化
 
@@ -301,7 +314,7 @@
 
         const data = {
           form_id : "15151",
-          mode    : generateSelect.value, // Selectで選択された値
+          mode    : selectedValue,
           answers : [{ item_name : text }]
         };
 
