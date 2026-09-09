@@ -66,6 +66,32 @@
       flex-wrap: wrap;
     }
 
+    /* メニュー内のSelect要素スタイル */
+    .content-menu select {
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid #0284c7;
+      border-radius: 6px;
+      background-color: #0284c7;
+      color: #ffffff;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      height: 38px;
+    }
+
+    .content-menu select:hover {
+      background-color: #0369a1;
+      border-color: #0369a1;
+    }
+
+    .content-menu select option {
+      background-color: #ffffff;
+      color: #334155;
+    }
+
+    /* ボタン共通スタイル */
     .content-menu button {
       padding: 8px 16px;
       font-size: 14px;
@@ -79,21 +105,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      height: 38px;
     }
 
     .content-menu button:hover {
       background-color: #f8fafc;
       border-color: #94a3b8;
-    }
-
-    #generate-btn {
-      background-color: #0284c7;
-      color: #ffffff;
-      border-color: #0284c7;
-    }
-
-    #generate-btn:hover {
-      background-color: #0369a1;
     }
 
     /* --- 使い方表示パネル --- */
@@ -154,7 +171,7 @@
       gap: 16px;
     }
 
-    /* 選択エリア */
+    /* 入力エリア */
     .input-section {
       width: 100%;
       background-color: #ffffff;
@@ -163,7 +180,7 @@
       padding: 20px;
     }
 
-    #select-text {
+    #input-text {
       width: 100%;
       height: 42px;
       background-color: #ffffff;
@@ -173,10 +190,9 @@
       padding: 0 12px;
       border-radius: 6px;
       outline: none;
-      cursor: pointer;
     }
 
-    #select-text:focus {
+    #input-text:focus {
       border-color: #0284c7;
     }
 
@@ -225,7 +241,12 @@
   <div class="content">
     <!-- 操作メニュー -->
     <div class="content-menu">
-      <button id="generate-btn">QR生成</button>
+      <!-- 「QR生成」ボタンをSelect要素に置き換え -->
+      <select id="generate-select">
+        <option value="default">QR生成 (標準)</option>
+        <option value="option1">任意テキスト1</option>
+        <option value="option2">任意テキスト2</option>
+      </select>
       <button id="download-btn">ダウンロード</button>
       <button id="usage-btn">使い方</button>
     </div>
@@ -239,8 +260,8 @@
       <div class="usage-content">
         <h3>【作成手順】</h3>
         <ol>
-          <li>プルダウンメニューから変換したい項目を選択します。</li>
-          <li>「QR生成」を押すか選択変更を行うと、下にQRコードが生成されます。</li>
+          <li>入力欄に文字列を入力します。</li>
+          <li>メニューの選択項目や入力値に応じて下にQRコードが生成されます。</li>
           <li>「ダウンロード」ボタンで画像として保存できます。</li>
         </ol>
       </div>
@@ -249,12 +270,7 @@
     <!-- メインコンテンツ -->
     <div class="content-main">
       <div class="input-section">
-        <select id="select-text">
-          <option value="">-- 選択してください --</option>
-          <option value="項目Aのテキスト">項目A</option>
-          <option value="項目Bのテキスト">項目B</option>
-          <option value="https://example.com">サンプルURL</option>
-        </select>
+        <input type="text" id="input-text" placeholder="ここにQRコード化したいテキストを入力してください..." />
       </div>
       <div class="qr-section">
         <div id="qrcode" class="qr-container">
@@ -266,8 +282,8 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const selectText = document.getElementById('select-text');
-      const generateBtn = document.getElementById('generate-btn');
+      const generateSelect = document.getElementById('generate-select');
+      const inputText = document.getElementById('input-text');
       const downloadBtn = document.getElementById('download-btn');
       const usageBtn = document.getElementById('usage-btn');
       const usageCloseBtn = document.getElementById('usage-close-btn');
@@ -275,7 +291,7 @@
       const qrContainer = document.getElementById('qrcode');
 
       function makeCode() {
-        const text = selectText.value.trim();
+        const text = inputText.value.trim();
         qrContainer.innerHTML = ''; // 初期化
 
         if (text === '') {
@@ -285,18 +301,18 @@
 
         const data = {
           form_id : "15151",
+          mode    : generateSelect.value, // Selectで選択された値
           answers : [{ item_name : text }]
         };
 
         try {
-          const typeNumber = 0; // 自動で型番を計算
-          const errorCorrectionLevel = 'L'; // 誤り訂正レベル: L
+          const typeNumber = 0; // 自動計算
+          const errorCorrectionLevel = 'L';
           const qr = qrcode(typeNumber, errorCorrectionLevel);
 
           qr.addData(JSON.stringify(data));
           qr.make();
 
-          // IMGタグとして要素を出力
           qrContainer.innerHTML = qr.createImgTag(5, 10);
 
         } catch (e) {
@@ -306,8 +322,8 @@
       }
 
       // イベントリスナー設定
-      generateBtn.addEventListener('click', makeCode);
-      selectText.addEventListener('change', makeCode);
+      generateSelect.addEventListener('change', makeCode);
+      inputText.addEventListener('input', makeCode);
 
       // ダウンロード機能
       downloadBtn.addEventListener('click', () => {
