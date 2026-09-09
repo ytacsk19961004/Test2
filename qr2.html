@@ -321,7 +321,7 @@
 
         try {
           const typeNumber = 0; // 自動計算
-          const errorCorrectionLevel = 'L';
+          const errorCorrectionLevel = 'H';
           const qr = qrcode(typeNumber, errorCorrectionLevel);
 
           qr.addData(JSON.stringify(data));
